@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Endócrino no Envelhecimento</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --card: #1a2235;
+    --border: rgba(255,255,255,0.07);
+    --accent1: #e8a045;
+    --accent2: #5b9bd5;
+    --accent3: #6ecb8a;
+    --accent4: #c97fd4;
+    --accent5: #e8644a;
+    --accent6: #f0c94a;
+    --text: #e8eaf0;
+    --muted: #8899b0;
+    --highlight: rgba(232,160,69,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 10%, rgba(91,155,213,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 80%, rgba(232,160,69,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 60% 40%, rgba(110,203,138,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── LAYOUT ── */
+  #app { position: relative; z-index: 1; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 2rem 4rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,14,26,0.92);
+    backdrop-filter: blur(16px);
+  }
+  .logo-area { display: flex; flex-direction: column; gap: 2px; }
+  .logo-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent1);
+    text-transform: uppercase;
+  }
+  .logo-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .header-meta {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.6;
+  }
+  .progress-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 3px; background: rgba(255,255,255,0.05); z-index: 200;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent1));
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 5rem 4rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .hero-kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.35s;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent1);
+  }
+  .hero-desc {
+    max-width: 640px;
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.5s;
+  }
+  .hero-tags {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.65s;
+  }
+  .tag {
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    border: 1px solid;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── NAV MODULES ── */
+  .modules-nav {
+    padding: 2rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.8s;
+  }
+  .modules-nav h2 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+  }
+  .module-btn {
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: left;
+  }
+  .module-btn:hover, .module-btn.active {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .module-btn .mb-icon { font-size: 1.4rem; margin-bottom: 0.4rem; display: block; }
+  .module-btn .mb-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.1rem;
+  }
+  .module-btn .mb-sub {
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  /* ── MAIN CONTENT ── */
+  .content-area {
+    padding: 1.5rem 4rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── TOPIC PANELS ── */
+  .topic-panel { display: none; }
+  .topic-panel.visible {
+    display: block;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 2rem 2.5rem;
+    background: var(--card);
+    border-radius: 16px 16px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .panel-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+  }
+  .panel-icon-big { font-size: 3rem; flex-shrink: 0; }
+  .panel-header-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .panel-header-text p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 600px;
+  }
+  .panel-body {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
+  }
+
+  /* ── TABS ── */
+  .tabs-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 0.9rem 1.4rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--muted);
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--text); border-bottom-color: currentColor; }
+  .tab-content { display: none; padding: 2rem 2.5rem; }
+  .tab-content.visible { display: block; animation: fadeIn 0.3s ease; }
+
+  /* ── CONTENT BLOCKS ── */
+  .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .prose p {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .prose p strong { color: var(--text); font-weight: 600; }
+  .prose ul {
+    list-style: none;
+    margin-bottom: 1rem;
+  }
+  .prose ul li {
+    font-size: 0.88rem;
+    color: var(--muted);
+    padding: 0.3rem 0 0.3rem 1.2rem;
+    position: relative;
+    line-height: 1.6;
+  }
+  .prose ul li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--accent1);
+    font-size: 0.75rem;
+  }
+
+  /* ── INFO CARDS ── */
+  .cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .info-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+  }
+  .info-card .ic-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .info-card .ic-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+  .info-card .ic-desc {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── ALERT BOXES ── */
+  .alert {
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    display: flex;
+    gap: 0.75rem;
+  }
+  .alert-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .alert-text strong { display: block; margin-bottom: 0.2rem; font-size: 0.82rem; }
+  .alert-text span { color: var(--muted); font-size: 0.82rem; }
+  .alert-warning { background: rgba(232,100,74,0.1); border: 1px solid rgba(232,100,74,0.25); }
+  .alert-info { background: rgba(91,155,213,0.1); border: 1px solid rgba(91,155,213,0.25); }
+  .alert-success { background: rgba(110,203,138,0.1); border: 1px solid rgba(110,203,138,0.25); }
+  .alert-note { background: rgba(232,160,69,0.1); border: 1px solid rgba(232,160,69,0.25); }
+
+  /* ── TABLE ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-bottom: 1.5rem;
+  }
+  .data-table th {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table td strong { color: var(--text); }
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 100px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .quiz-q {
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+    color: var(--text);
+  }
+  .quiz-q .q-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent1);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .quiz-opt {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 0.83rem;
+    color: var(--muted);
+    transition: all 0.2s;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .quiz-opt:hover { border-color: rgba(255,255,255,0.15); color: var(--text); background: rgba(255,255,255,0.04); }
+  .quiz-opt.correct { border-color: var(--accent3); background: rgba(110,203,138,0.12); color: var(--text); }
+  .quiz-opt.wrong { border-color: var(--accent5); background: rgba(232,100,74,0.1); color: var(--text); }
+  .quiz-opt .opt-letter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .quiz-feedback {
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; animation: fadeIn 0.3s ease; }
+  .quiz-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1rem;
+    font-size: 0.78rem; color: var(--muted);
+  }
+  .btn {
+    padding: 0.55rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary {
+    background: var(--accent1);
+    color: #0a0e1a;
+  }
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-ghost {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.2); }
+
+  /* ── HIGHLIGHTS TWO-COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.5rem; }
+  @media(max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  .highlight-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+  }
+  .highlight-box h4 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .highlight-box ul { list-style: none; }
+  .highlight-box ul li {
+    font-size: 0.8rem;
+    color: var(--muted);
+    padding: 0.25rem 0 0.25rem 1rem;
+    position: relative;
+    line-height: 1.55;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .highlight-box ul li:last-child { border-bottom: none; }
+  .highlight-box ul li::before {
+    content: '·';
+    position: absolute; left: 0;
+    font-size: 1.2rem; line-height: 1;
+  }
+
+  /* ── FLOWCHART ── */
+  .flowchart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin: 1.5rem 0;
+  }
+  .flow-node {
+    padding: 0.7rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-align: center;
+    min-width: 200px;
+    max-width: 320px;
+  }
+  .flow-arrow {
+    width: 2px;
+    height: 28px;
+    background: var(--border);
+    position: relative;
+  }
+  .flow-arrow::after {
+    content: '▼';
+    position: absolute;
+    bottom: -8px;
+    left: 50%; transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .flow-row { display: flex; gap: 1rem; align-items: flex-start; }
+
+  /* ── EPIDEMIO BOX ── */
+  .epidemio-strip {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .epi-item { flex: 1; min-width: 120px; }
+  .epi-item .epi-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+  .epi-item .epi-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ── DRUGS GRID ── */
+  .drugs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; }
+  .drug-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  .drug-card .dc-name { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.15rem; }
+  .drug-card .dc-class { font-size: 0.68rem; color: var(--muted); margin-bottom: 0.5rem; font-family: 'DM Mono', monospace; }
+  .drug-card .dc-note { font-size: 0.72rem; color: var(--muted); line-height: 1.45; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width: 768px) {
+    header { padding: 1rem 1.5rem; }
+    .hero, .modules-nav, .content-area { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .modules-grid { grid-template-columns: repeat(3, 1fr); }
+    .cards-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── COLOR ACCENTS PER MODULE ── */
+  .m0 { --mc: var(--accent2); }
+  .m1 { --mc: var(--accent1); }
+  .m2 { --mc: var(--accent3); }
+  .m3 { --mc: var(--accent4); }
+  .m4 { --mc: var(--accent5); }
+  .m5 { --mc: var(--accent6); }
+
+  .module-btn:hover .mb-title, .module-btn.active .mb-title { color: var(--mc); }
+  .module-btn.active { border-color: var(--mc); box-shadow: 0 0 0 1px var(--mc), 0 8px 24px rgba(0,0,0,0.3); }
+  .panel-header::before { background: var(--mc); }
+  .section-title { color: var(--mc); }
+  .highlight-box ul li::before { color: var(--mc); }
+
+</style>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div id="app">
+
+<!-- HEADER -->
+<header>
+  <div class="logo-area">
+    <span class="logo-tag">Processo de Envelhecimento · 3º Período</span>
+    <span class="logo-title">Endocrinologia Geriátrica</span>
+  </div>
+  <div class="header-meta">
+    Profa. Dra. Gabriela Russo<br>
+    Faculdade Santa Teresa · Manaus, AM
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-kicker">Módulo Endócrino · Diretrizes 2023–2025</div>
+  <h1>Sistema Endócrino<br>no <em>Envelhecimento</em></h1>
+  <p class="hero-desc">
+    O envelhecimento impõe uma reconfiguração progressiva de todos os eixos hormonais.
+    Este módulo integra fisiopatologia, epidemiologia brasileira, evidências de qualidade
+    e aplicabilidade ao SUS Amazônico — com casos clínicos interativos.
+  </p>
+  <div class="hero-tags">
+    <span class="tag" style="color:var(--accent2);border-color:rgba(91,155,213,0.3)">Tireoide</span>
+    <span class="tag" style="color:var(--accent1);border-color:rgba(232,160,69,0.3)">Diabetes Mellitus</span>
+    <span class="tag" style="color:var(--accent3);border-color:rgba(110,203,138,0.3)">Dislipidemia</span>
+    <span class="tag" style="color:var(--accent4);border-color:rgba(201,127,212,0.3)">Síndrome Metabólica</span>
+    <span class="tag" style="color:var(--accent5);border-color:rgba(232,100,74,0.3)">Obesidade</span>
+    <span class="tag" style="color:var(--accent6);border-color:rgba(240,201,74,0.3)">Osteoporose</span>
+  </div>
+</div>
+
+<!-- MODULE NAV -->
+<div class="modules-nav">
+  <h2>Selecione o módulo</h2>
+  <div class="modules-grid">
+    <button class="module-btn m0 active" onclick="showModule(0)">
+      <span class="mb-icon">🦋</span>
+      <span class="mb-title">Tireoide</span>
+      <span class="mb-sub">Hipotireoidismo, hipertireoidismo, nódulos</span>
+    </button>
+    <button class="module-btn m1" onclick="showModule(1)">
+      <span class="mb-icon">🩸</span>
+      <span class="mb-title">Diabetes</span>
+      <span class="mb-sub">DM2 no idoso, metas glicêmicas</span>
+    </button>
+    <button class="module-btn m2" onclick="showModule(2)">
+      <span class="mb-icon">💧</span>
+      <span class="mb-title">Dislipidemia</span>
+      <span class="mb-sub">Estatinas, risco cardiovascular</span>
+    </button>
+    <button class="module-btn m3" onclick="showModule(3)">
+      <span class="mb-icon">⚙️</span>
+      <span class="mb-title">S. Metabólica</span>
+      <span class="mb-sub">Critérios, manejo integrado</span>
+    </button>
+    <button class="module-btn m4" onclick="showModule(4)">
+      <span class="mb-icon">⚖️</span>
+      <span class="mb-title">Obesidade</span>
+      <span class="mb-sub">Obesidade sarcopênica, tratamento</span>
+    </button>
+    <button class="module-btn m5" onclick="showModule(5)">
+      <span class="mb-icon">🦴</span>
+      <span class="mb-title">Osteoporose</span>
+      <span class="mb-sub">FRAX, bifosfonatos, quedas</span>
+    </button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content-area">
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 0 · TIREOIDE                          -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-0" class="topic-panel m0 visible">
+    <div class="panel-header">
+      <div class="panel-icon-big">🦋</div>
+      <div class="panel-header-text">
+        <h2>Tireoide no Envelhecimento</h2>
+        <p>O eixo hipotálamo-hipófise-tireoide sofre alterações funcionais significativas com a idade. Hipotireoidismo é a disfunção mais prevalente no idoso e frequentemente subdiagnosticada por apresentação atípica.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'t0')">Fisiopatologia</button>
+        <button class="tab-btn" onclick="showTab(this,'t1')">Diagnóstico</button>
+        <button class="tab-btn" onclick="showTab(this,'t2')">Tratamento</button>
+        <button class="tab-btn" onclick="showTab(this,'t3')">Nódulos & Câncer</button>
+        <button class="tab-btn" onclick="showTab(this,'t4')">Caso Clínico</button>
+      </div>
+
+      <!-- Fisiopatologia -->
+      <div id="t0" class="tab-content visible">
+        <div class="section-title">Alterações fisiológicas do envelhecimento</div>
+        <div class="cards-row">
+          <div class="info-card" style="--mc:var(--accent2)"><div class="info-card::before"></div>
+            <div class="ic-label">T3 total/livre</div>
+            <div class="ic-value" style="color:var(--accent5)">↓ Reduz</div>
+            <div class="ic-desc">Queda na conversão periférica de T4→T3 por diminuição da desiodase tipo 1</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">TSH basal</div>
+            <div class="ic-value" style="color:var(--accent1)">↑ Tende ↑</div>
+            <div class="ic-desc">Elevação fisiológica: valores de referência devem ser ajustados para > 65 anos (até 6–7 mUI/L)</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Volume glandular</div>
+            <div class="ic-value" style="color:var(--muted)">↓↓</div>
+            <div class="ic-desc">Fibrose e atrofia progressiva; nódulos tireoidianos em até 65% dos idosos ao US</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Anticorpos</div>
+            <div class="ic-value" style="color:var(--accent4)">↑ Anti-TPO</div>
+            <div class="ic-desc">Prevalência crescente de tireoidite de Hashimoto com a idade; maior em mulheres</div>
+          </div>
+        </div>
+        <div class="alert alert-note">
+          <span class="alert-icon">📌</span>
+          <div class="alert-text">
+            <strong>Ajuste de referência no idoso (ATA 2023)</strong>
+            <span>TSH de 4,5–7,0 mUI/L pode ser normal em idosos sem sintomas. Tratar hipertireoidismo subclínico é mais importante que tratar hipotireoidismo subclínico leve nessa faixa etária.</span>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent5)">⚠️ Hipotireoidismo no idoso</h4>
+            <ul>
+              <li>Prevalência: 7–10% nas mulheres > 65 anos (SBGG 2023)</li>
+              <li>Apresentação atípica: fadiga, constipação, déficit cognitivo, bradicardia</li>
+              <li>Pode mimetizar demência (pseudodemência hipotireoidiana)</li>
+              <li>Coma mixedematoso: emergência com mortalidade > 30%</li>
+              <li>No Amazonas: pesquisa ativa em populações ribeirinhas (deficiência de iodo e exposição a goitrogênios)</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent2)">⚡ Hipertireoidismo no idoso</h4>
+            <ul>
+              <li>Prevalência: 0,5–2%; causa mais comum: bócio multinodular tóxico</li>
+              <li>"Hipertireoidismo apático": ausência de tremor e agitação; pode cursar com FA, fraqueza</li>
+              <li>Fibrilação atrial em 10–20% dos casos</li>
+              <li>Risco aumentado de osteoporose e fraturas</li>
+              <li>Efeito do iodo: cuidado com contrastes iodados em idosos com bócio nodular</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagnóstico -->
+      <div id="t1" class="tab-content">
+        <div class="section-title">Abordagem diagnóstica</div>
+        <div class="flowchart">
+          <div class="flow-node" style="background:rgba(91,155,213,0.15);border:1px solid rgba(91,155,213,0.3);color:var(--text)">
+            🔍 Suspeita clínica ou rastreamento
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node" style="background:var(--card);border:1px solid var(--border)">
+            <strong style="color:var(--accent2)">TSH sérico</strong><br>
+            <span style="font-size:0.75rem;color:var(--muted)">Exame de 1ª linha (ATA 2023)</span>
+          </div>
+          <div class="flow-arrow"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;width:100%;max-width:600px">
+            <div class="flow-node" style="background:rgba(110,203,138,0.12);border:1px solid rgba(110,203,138,0.3);font-size:0.75rem">
+              <strong style="color:var(--accent3)">TSH normal</strong><br>Eutireoidismo<br>Reavaliação anual se fatores de risco
+            </div>
+            <div class="flow-node" style="background:rgba(232,160,69,0.12);border:1px solid rgba(232,160,69,0.3);font-size:0.75rem">
+              <strong style="color:var(--accent1)">TSH ↑</strong><br>T4 livre<br>Anti-TPO se T4 normal
+            </div>
+            <div class="flow-node" style="background:rgba(232,100,74,0.12);border:1px solid rgba(232,100,74,0.3);font-size:0.75rem">
+              <strong style="color:var(--accent5)">TSH ↓</strong><br>T4L e T3L<br>Cintilografia/US se indicado
+            </div>
+          </div>
+        </div>
+        <div class="section-title" style="margin-top:1.5rem">Rastreamento: quando indicar?</div>
+        <table class="data-table">
+          <thead><tr><th>Situação</th><th>Recomendação</th><th>Fonte</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Mulheres > 60 anos assintomáticas</strong></td><td>TSH a cada 5 anos (USPSTF Nível B)</td><td>USPSTF 2023</td></tr>
+            <tr><td><strong>Diabetes, síndrome metabólica</strong></td><td>TSH anual</td><td>ATA 2023</td></tr>
+            <tr><td><strong>Litio, amiodarona, cordarone</strong></td><td>TSH semestral</td><td>ATA 2023</td></tr>
+            <tr><td><strong>FA de início recente no idoso</strong></td><td>TSH + T4L obrigatórios</td><td>SBGG 2023</td></tr>
+            <tr><td><strong>Demência de investigação</strong></td><td>TSH incluso no painel mínimo</td><td>DSM-5, SBN</td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-text">
+            <strong>Atenção ao Amazonas / SUS</strong>
+            <span>Regiões de difícil acesso: utilizar TSH no painel básico da visita domiciliar. A deficiência de iodo ainda persiste em comunidades ribeirinhas e indígenas do AM. PNAN recomenda monitoramento ativo.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tratamento -->
+      <div id="t2" class="tab-content">
+        <div class="section-title">Tratamento do hipotireoidismo no idoso</div>
+        <div class="alert alert-info">
+          <span class="alert-icon">💊</span>
+          <div class="alert-text">
+            <strong>Levotiroxina (L-T4): primeira e única linha na maioria dos idosos (ATA 2023, SBGG 2023)</strong>
+            <span>Iniciar com doses menores (12,5–25 µg/dia) e titular lentamente. Titulação a cada 6–8 semanas. Idosos com doença cardíaca: início ainda mais cauteloso (12,5 µg/dia).</span>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Situação</th><th>Alvo de TSH</th><th>Dose inicial</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Idoso < 75 anos, sem comorbidades</strong></td><td>1,5–3,0 mUI/L</td><td>25–50 µg/dia</td></tr>
+            <tr><td><strong>Idoso > 75 anos</strong></td><td>3,0–6,0 mUI/L</td><td>12,5–25 µg/dia</td></tr>
+            <tr><td><strong>Cardiopatia isquêmica</strong></td><td>3,0–6,0 mUI/L</td><td>12,5 µg/dia</td></tr>
+            <tr><td><strong>Hipotireoidismo subclínico (TSH < 10)</strong></td><td>Watchful waiting > 75 anos</td><td>Avaliar individualmente</td></tr>
+          </tbody>
+        </table>
+        <div class="section-title">Hipertireoidismo: opções terapêuticas</div>
+        <div class="cards-row">
+          <div class="info-card">
+            <div class="ic-label">Drogas antitireoidianas</div>
+            <div class="ic-value" style="color:var(--accent1);font-size:1.1rem">MMI / PTU</div>
+            <div class="ic-desc">Metimazol preferido. PTU reservado para gestação e crise tireotóxica. Monitorar agranulocitose.</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Iodo radioativo (RAI)</div>
+            <div class="ic-value" style="color:var(--accent2);font-size:1.1rem">¹³¹I</div>
+            <div class="ic-desc">Primeira linha para bócio multinodular tóxico no idoso. Cuidado: exacerbação se hipertireoidismo grave.</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Beta-bloqueador adjuvante</div>
+            <div class="ic-value" style="color:var(--accent3);font-size:1.1rem">Propranolol</div>
+            <div class="ic-desc">Controle de sintomas adrenérgicos (FC, tremor). Atenolol: alternativa cardioseletiva. Avaliar contraindicações.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nódulos -->
+      <div id="t3" class="tab-content">
+        <div class="section-title">Nódulos tireoidianos: abordagem racional</div>
+        <div class="prose">
+          <p><strong>Prevalência:</strong> Nódulos são encontrados em 40–65% dos idosos ao US cervical. A grande maioria (> 90%) é benigna. O desafio clínico é identificar os 5–15% com potencial maligno sem submeter o paciente a procedimentos desnecessários.</p>
+        </div>
+        <div class="alert alert-note">
+          <span class="alert-icon">📋</span>
+          <div class="alert-text">
+            <strong>Sistema TIRADS — ACR (2017)</strong>
+            <span>Categoriza nódulos de TR1 (benigno) a TR5 (altamente suspeito) com base em composição, ecogenicidade, forma, margens e calcificações. Determina indicação de PAAF.</span>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>TIRADS</th><th>Característica</th><th>Risco malignidade</th><th>Conduta</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge" style="background:rgba(110,203,138,0.2);color:var(--accent3)">TR1</span></td><td>Benigno (cisto simples)</td><td>&lt; 0,3%</td><td>Não puncionar</td></tr>
+            <tr><td><span class="badge" style="background:rgba(110,203,138,0.15);color:var(--accent3)">TR2</span></td><td>Não suspeito</td><td>&lt; 0,5%</td><td>Não puncionar</td></tr>
+            <tr><td><span class="badge" style="background:rgba(232,160,69,0.2);color:var(--accent1)">TR3</span></td><td>Levemente suspeito</td><td>~5%</td><td>PAAF se ≥ 2,5 cm</td></tr>
+            <tr><td><span class="badge" style="background:rgba(201,127,212,0.2);color:var(--accent4)">TR4</span></td><td>Moderadamente suspeito</td><td>~15%</td><td>PAAF se ≥ 1,5 cm</td></tr>
+            <tr><td><span class="badge" style="background:rgba(232,100,74,0.2);color:var(--accent5)">TR5</span></td><td>Altamente suspeito</td><td>~35%</td><td>PAAF se ≥ 1,0 cm</td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-text">
+            <strong>Incidentaloma tireoidiano no idoso: evitar cascata diagnóstica!</strong>
+            <span>Quaternary prevention principle: a maioria dos carcinomas papilares de baixo risco em idosos tem curso indolente. Discutir individualmente benefício de cirurgia vs. vigilância ativa (ATA 2023, Bethesda VI).</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caso Clínico -->
+      <div id="t4" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container" id="quiz-tireoide">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Dona Raimunda, 72 anos, ribeirinha de comunidade no Rio Solimões (AM), trazida pela filha com queixa de "cansaço demais, esquecimento e inchaço no pescoço há 1 ano". Ao exame: FC 58 bpm, PA 150/90 mmHg, pele ressecada, reflexo aquileu lento, bócio difuso grau II. TSH = 12,8 mUI/L, T4 livre = 0,7 ng/dL (ref. 0,8–1,8), Anti-TPO positivo 1:320. Qual é a conduta mais adequada?
+          </div>
+          <div class="quiz-options" id="quiz-t-opts">
+            <div class="quiz-opt" onclick="answerQuiz('t',0)"><span class="opt-letter">A</span> Aguardar 6 meses e repetir TSH, pois TSH pode ser fisiologicamente elevado no idoso.</div>
+            <div class="quiz-opt" onclick="answerQuiz('t',1)"><span class="opt-letter">B</span> Iniciar levotiroxina 100 µg/dia imediatamente para atingir TSH < 1,0 mUI/L rapidamente.</div>
+            <div class="quiz-opt" onclick="answerQuiz('t',2)"><span class="opt-letter">C</span> Iniciar levotiroxina 25 µg/dia, com alvo de TSH 3,0–6,0 mUI/L, investigar US de tireoide e orientar suplementação de iodo via PNAN.</div>
+            <div class="quiz-opt" onclick="answerQuiz('t',3)"><span class="opt-letter">D</span> Solicitar cintilografia de tireoide como próximo passo diagnóstico antes de tratar.</div>
+          </div>
+          <div class="quiz-feedback" id="quiz-t-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 1 · DIABETES                          -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-1" class="topic-panel m1">
+    <div class="panel-header">
+      <div class="panel-icon-big">🩸</div>
+      <div class="panel-header-text">
+        <h2>Diabetes Mellitus no Idoso</h2>
+        <p>A prevalência de DM2 em idosos brasileiros supera 25%. O manejo requer metas individualizadas, atenção ao risco de hipoglicemia e integração com fragilidade, função cognitiva e condição funcional.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'d0')">Epidemiologia</button>
+        <button class="tab-btn" onclick="showTab(this,'d1')">Fisiopatologia</button>
+        <button class="tab-btn" onclick="showTab(this,'d2')">Metas Glicêmicas</button>
+        <button class="tab-btn" onclick="showTab(this,'d3')">Farmacoterapia</button>
+        <button class="tab-btn" onclick="showTab(this,'d4')">Caso Clínico</button>
+      </div>
+
+      <div id="d0" class="tab-content visible">
+        <div class="section-title">Epidemiologia — Brasil e Amazônia</div>
+        <div class="epidemio-strip">
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent1)">25%+</div><div class="epi-label">Prevalência em idosos brasileiros (VIGITEL 2023)</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent5)">3ª</div><div class="epi-label">Causa de hospitalização no SUS em > 60 anos</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent2)">77M</div><div class="epi-label">Brasileiros com DM projetados para 2045 (IDF 2023)</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent4)">50%</div><div class="epi-label">Dos casos não diagnosticados na APS (IBGE 2023)</div></div>
+        </div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">🌳</span>
+          <div class="alert-text">
+            <strong>Contexto Amazônico</strong>
+            <span>Populações indígenas do AM apresentam prevalência crescente de DM2 por transição nutricional acelerada. Alta taxa de DM não diagnosticado em comunidades ribeirinhas por acesso limitado a glicemia de jejum e HbA1c. Chagas + DM: dupla carga cardiovascular.</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="d1" class="tab-content">
+        <div class="section-title">Fisiopatologia do DM2 no envelhecimento</div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent1)">🔬 Mecanismos moleculares</h4>
+            <ul>
+              <li>↓ Sensibilidade insulínica: ↑ adiposidade visceral, ↓ massa muscular (resistência insulínica periférica)</li>
+              <li>↓ Secreção de insulina: disfunção de células β por SASP/inflamação crônica</li>
+              <li>↓ GLP-1 e GIP: redução de incretinas com a idade</li>
+              <li>↑ Glucagon basal: hiperglucagonemia relativa</li>
+              <li>↓ DHEA e IGF-1: contribuem para resistência insulínica</li>
+              <li>Estresse oxidativo mitocondrial: disfunção β-celular acelerada</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent5)">⚡ Hipoglicemia no idoso: alto risco!</h4>
+            <ul>
+              <li>Sintomas adrenérgicos (tremor, sudorese) podem estar atenuados</li>
+              <li>Hipoglicemia assintomática mais frequente após os 70 anos</li>
+              <li>Consequências graves: quedas, FA, AVC, declínio cognitivo</li>
+              <li>Hipoglicemia grave → internação: mortalidade 5× maior em idosos</li>
+              <li>Beers 2023: sulfoniluréias de longa duração (glibenclamida) — EVITAR em idosos</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="d2" class="tab-content">
+        <div class="section-title">Metas glicêmicas individualizadas (ADA 2024 / SBGG 2023)</div>
+        <table class="data-table">
+          <thead><tr><th>Perfil do paciente</th><th>HbA1c alvo</th><th>Glicemia jejum</th><th>Glicemia pós-prandial</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Funcional, baixa comorbidade, longa expectativa de vida</strong></td>
+              <td><span class="badge" style="background:rgba(110,203,138,0.2);color:var(--accent3)">&lt; 7,0–7,5%</span></td>
+              <td>80–130 mg/dL</td>
+              <td>&lt; 180 mg/dL</td>
+            </tr>
+            <tr>
+              <td><strong>Fragilidade moderada, múltiplas comorbidades</strong></td>
+              <td><span class="badge" style="background:rgba(232,160,69,0.2);color:var(--accent1)">7,5–8,0%</span></td>
+              <td>90–150 mg/dL</td>
+              <td>&lt; 200 mg/dL</td>
+            </tr>
+            <tr>
+              <td><strong>Fragilidade grave, demência avançada, dependência total</strong></td>
+              <td><span class="badge" style="background:rgba(232,100,74,0.2);color:var(--accent5)">8,0–8,5%</span></td>
+              <td>100–180 mg/dL</td>
+              <td>Evitar hipo</td>
+            </tr>
+            <tr>
+              <td><strong>Cuidados paliativos / fim de vida</strong></td>
+              <td colspan="3" style="color:var(--muted)">Evitar hipoglicemia sintomática e hiperglicemia extrema. Conforto como meta principal.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="alert alert-info">
+          <span class="alert-icon">📐</span>
+          <div class="alert-text">
+            <strong>Avaliação Geriátrica Ampla orienta a meta glicêmica</strong>
+            <span>A escolha da meta deve incorporar: estado funcional (KATZ/LAWTON), risco de hipoglicemia, cognição (MEEM/MoCA), fragilidade (fenótipo de Fried), expectativa de vida e preferências do paciente. HbA1c isolada não é suficiente.</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="d3" class="tab-content">
+        <div class="section-title">Farmacoterapia do DM2 no idoso</div>
+        <div class="drugs-grid">
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent3)">Metformina</div>
+            <div class="dc-class">Biguanida · 1ª linha</div>
+            <div class="dc-note">Segura na maioria. Suspender se TFG &lt; 30. Atenção: B12 com uso prolongado. Disponível RENAME.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent2)">iDPP4 (Gliptinas)</div>
+            <div class="dc-class">Sitagliptina, Vildagliptina</div>
+            <div class="dc-note">Excelente perfil no idoso: baixo risco hipoglicemia. Ajuste renal. Sitagliptina no RENAME.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent1)">iSGLT2</div>
+            <div class="dc-class">Empagliflozina, Dapagliflozina</div>
+            <div class="dc-note">Benefício CV e renal comprovado (EMPA-REG, DAPA-HF). Atenção: ITU, desidratação, amputação. Custo SUS.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent4)">GLP-1 RA</div>
+            <div class="dc-class">Semaglutida, Liraglutida</div>
+            <div class="dc-note">Redução CV e perda de peso. Atenção à sarcopenia em idosos com IMC limítrofe. Alto custo.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent5)">Sulfoniluréias</div>
+            <div class="dc-class">Glibenclamida — EVITAR</div>
+            <div class="dc-note">Beers 2023: alto risco de hipoglicemia. Glicazida MR: mais segura se necessária. Disponível SUS.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--muted)">Insulina</div>
+            <div class="dc-class">Basal / Esquemas</div>
+            <div class="dc-note">Iniciar com insulina basal (glargina, detemir). Simplificar esquemas em idosos frágeis. Atenção à técnica de aplicação.</div>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">🔴</span>
+          <div class="alert-text">
+            <strong>Deprescrição no DM do idoso frágil</strong>
+            <span>Idosos com HbA1c muito controlada (< 6,5%) em uso de múltiplos hipoglicemiantes devem ter tratamento reavaliado — risco de hipoglicemia supera benefícios em frágeis. STOPP/START 2023 e Beers 2023 recomendam reavaliação ativa.</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="d4" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container" id="quiz-dm">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Sr. Benedito, 78 anos, com DM2 há 20 anos, hipertensão e insuficiência cardíaca com fração de ejeção reduzida (FEr). HbA1c = 6,1% (em uso de glibenclamida 10mg/dia e metformina 2g/dia). Relata 2 episódios de tontura e queda no último mês. TFG = 45 mL/min/1,73m². Qual a melhor conduta farmacológica?
+          </div>
+          <div class="quiz-options" id="quiz-d-opts">
+            <div class="quiz-opt" onclick="answerQuiz('d',0)"><span class="opt-letter">A</span> Manter esquema atual pois HbA1c está bem controlada.</div>
+            <div class="quiz-opt" onclick="answerQuiz('d',1)"><span class="opt-letter">B</span> Substituir glibenclamida por empagliflozina (benefício CV em ICFEr) + manter metformina com monitorização renal.</div>
+            <div class="quiz-opt" onclick="answerQuiz('d',2)"><span class="opt-letter">C</span> Adicionar insulina NPH para melhor controle glicêmico.</div>
+            <div class="quiz-opt" onclick="answerQuiz('d',3)"><span class="opt-letter">D</span> Suspender toda medicação e reavaliar em 3 meses.</div>
+          </div>
+          <div class="quiz-feedback" id="quiz-d-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 2 · DISLIPIDEMIA                      -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-2" class="topic-panel m2">
+    <div class="panel-header">
+      <div class="panel-icon-big">💧</div>
+      <div class="panel-header-text">
+        <h2>Dislipidemia no Idoso</h2>
+        <p>O manejo da dislipidemia em idosos exige ponderação cuidadosa entre benefício CV documentado e riscos de eventos adversos, deprescrição em frágeis e metas individualizadas por risco.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'dl0')">Fisiopatologia</button>
+        <button class="tab-btn" onclick="showTab(this,'dl1')">Classificação & Metas</button>
+        <button class="tab-btn" onclick="showTab(this,'dl2')">Estatinas no Idoso</button>
+        <button class="tab-btn" onclick="showTab(this,'dl3')">Caso Clínico</button>
+      </div>
+
+      <div id="dl0" class="tab-content visible">
+        <div class="section-title">Alterações lipídicas com o envelhecimento</div>
+        <div class="cards-row">
+          <div class="info-card"><div class="ic-label">LDL-c</div><div class="ic-value" style="color:var(--accent1)">↑ até 65a</div><div class="ic-desc">Pico por volta dos 60–65 anos; declina após. Oxidação aumentada de LDL com senescência.</div></div>
+          <div class="info-card"><div class="ic-label">HDL-c</div><div class="ic-value" style="color:var(--accent5)">↓ em homens</div><div class="ic-desc">Queda progressiva em homens; mulheres pós-menopausa têm inversão do padrão de HDL.</div></div>
+          <div class="info-card"><div class="ic-label">Triglicerídeos</div><div class="ic-value" style="color:var(--accent4)">↑ frequente</div><div class="ic-desc">Associados à síndrome metabólica, DM2, obesidade visceral — comuns no idoso.</div></div>
+          <div class="info-card"><div class="ic-label">Lp(a)</div><div class="ic-value" style="color:var(--muted)">Estável</div><div class="ic-desc">Fator de risco independente; determinado geneticamente; não modifica com dieta/estatina.</div></div>
+        </div>
+        <div class="prose">
+          <p><strong>Mecanismos do envelhecimento vascular:</strong> Senescência de células endoteliais, ↑ LDL oxidado, ↓ eNOS, ↑ VCAM-1 e ICAM-1, rigidez arterial progressiva. A dislipidemia amplifica o processo aterogênico já acelerado pelo envelhecimento vascular.</p>
+        </div>
+      </div>
+
+      <div id="dl1" class="tab-content">
+        <div class="section-title">Estratificação de risco e metas (SBC 2023)</div>
+        <table class="data-table">
+          <thead><tr><th>Categoria de Risco</th><th>Perfil do paciente (exemplos)</th><th>Meta LDL-c</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge" style="background:rgba(232,100,74,0.2);color:var(--accent5)">Muito Alto</span></td><td>DAC comprovada, AVC isquêmico prévio, DM + lesão órgão-alvo</td><td><strong>&lt; 50 mg/dL</strong></td></tr>
+            <tr><td><span class="badge" style="background:rgba(232,160,69,0.2);color:var(--accent1)">Alto</span></td><td>DM sem lesão, IRC moderada, Framingham ≥ 20%</td><td><strong>&lt; 70 mg/dL</strong></td></tr>
+            <tr><td><span class="badge" style="background:rgba(201,127,212,0.2);color:var(--accent4)">Intermediário</span></td><td>Framingham 10–20%, SM, tabagismo</td><td><strong>&lt; 100 mg/dL</strong></td></tr>
+            <tr><td><span class="badge" style="background:rgba(91,155,213,0.2);color:var(--accent2)">Baixo</span></td><td>Framingham &lt; 10%, sem FR maiores</td><td><strong>&lt; 130 mg/dL</strong></td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-note">
+          <span class="alert-icon">🎯</span>
+          <div class="alert-text">
+            <strong>Prevenção secundária em idosos: benefício bem documentado acima dos 75 anos</strong>
+            <span>Meta-análise CTT (Lancet, 2022): para cada 1 mmol/L de redução de LDL, há redução de ~22% em eventos CV maiores — inclusive em > 75 anos com DAC estabelecida. O NNT é favorável em prevenção secundária.</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="dl2" class="tab-content">
+        <div class="section-title">Estatinas no idoso: benefício vs. risco</div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent3)">✅ Indicações bem fundamentadas</h4>
+            <ul>
+              <li>Prevenção 2ª: DAC, AVC isquêmico, DM + FA — benefício claro até os 85 anos</li>
+              <li>Prevenção 1ª em alto risco: Framingham ≥ 10% com múltiplos FR</li>
+              <li>Efeitos pleiotrópicos: anti-inflamatório, estabilização de placa</li>
+              <li>Redução de eventos em > 75 anos: comprovado (meta-análise CTT, Lancet 2022)</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent5)">⚠️ Riscos e cautelas no idoso</h4>
+            <ul>
+              <li>Miopatia/rabdomiólise: risco aumentado com polifarmácia (interações CYP3A4)</li>
+              <li>↑ Risco DM2: dose-dependente (moderado, mas real — JUPITER trial)</li>
+              <li>Efeitos cognitivos: dados conflitantes; FDA warning; monitorizar</li>
+              <li>Interação com anticoagulantes (varfarina): monitorar INR</li>
+              <li>Frágil avançado (&gt; 85 anos, demência grave, cuidados paliativos): deprescrever!</li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">🔄</span>
+          <div class="alert-text">
+            <strong>Deprescrição de estatinas em idosos frágeis (STOPP/START 2023)</strong>
+            <span>Pacientes com expectativa de vida &lt; 1 ano, demência avançada ou em cuidados paliativos: suspender estatinas. STOPP criterion H4: estatina em prognóstico &lt; 12 meses. Evidência NICE NG62.</span>
+          </div>
+        </div>
+        <div class="section-title">Outras drogas</div>
+        <div class="cards-row">
+          <div class="info-card"><div class="ic-label">Ezetimiba</div><div class="ic-value" style="color:var(--accent2);font-size:1rem">Boa tolerância</div><div class="ic-desc">Adjuvante à estatina. IMPROVE-IT: benefício em idosos. Sem interação muscular significativa.</div></div>
+          <div class="info-card"><div class="ic-label">iPCSK9</div><div class="ic-value" style="color:var(--accent4);font-size:1rem">Alto custo</div><div class="ic-desc">Evolocumabe, alirocumabe. Para muito alto risco com LDL não controlado. Não disponível no SUS básico.</div></div>
+          <div class="info-card"><div class="ic-label">Fibratos</div><div class="ic-value" style="color:var(--accent1);font-size:1rem">HTG grave</div><div class="ic-desc">Para hipertrigliceridemia ≥ 500 mg/dL (pancreatite). Fenofibrato: ajuste renal obrigatório no idoso.</div></div>
+        </div>
+      </div>
+
+      <div id="dl3" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Sra. Conceição, 83 anos, com demência de Alzheimer em estágio avançado (CDR 3), dependente total para AVDs, institucionalizada. Em uso de sinvastatina 40mg/dia há 10 anos, por hipercolesterolemia. LDL-c atual = 68 mg/dL. Relata dores musculares difusas há 3 meses. CPK = 3× LSN. Qual a conduta mais adequada?
+          </div>
+          <div class="quiz-options" id="quiz-dl-opts">
+            <div class="quiz-opt" onclick="answerQuiz('dl',0)"><span class="opt-letter">A</span> Aumentar dose para sinvastatina 80mg para atingir meta LDL &lt; 50 mg/dL.</div>
+            <div class="quiz-opt" onclick="answerQuiz('dl',1)"><span class="opt-letter">B</span> Suspender a sinvastatina (deprescrição): critério STOPP H4 aplicável, miopatia em curso, prognóstico limitado.</div>
+            <div class="quiz-opt" onclick="answerQuiz('dl',2)"><span class="opt-letter">C</span> Trocar para rosuvastatina 20mg e associar ezetimiba para maior redução de LDL.</div>
+            <div class="quiz-opt" onclick="answerQuiz('dl',3)"><span class="opt-letter">D</span> Manter esquema atual e tratar dores musculares com AINEs.</div>
+          </div>
+          <div class="quiz-feedback" id="quiz-dl-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 3 · SÍNDROME METABÓLICA               -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-3" class="topic-panel m3">
+    <div class="panel-header">
+      <div class="panel-icon-big">⚙️</div>
+      <div class="panel-header-text">
+        <h2>Síndrome Metabólica</h2>
+        <p>A síndrome metabólica afeta até 40% dos idosos brasileiros. É um construto clínico que integra resistência insulínica, obesidade visceral, dislipidemia e HAS, potencializando risco cardiovascular e de DM2.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'sm0')">Critérios Diagnósticos</button>
+        <button class="tab-btn" onclick="showTab(this,'sm1')">Fisiopatologia</button>
+        <button class="tab-btn" onclick="showTab(this,'sm2')">Manejo</button>
+        <button class="tab-btn" onclick="showTab(this,'sm3')">Caso Clínico</button>
+      </div>
+
+      <div id="sm0" class="tab-content visible">
+        <div class="section-title">Critérios diagnósticos — IDF/NHLBI/AHA/WHF 2009 (harmonizado)</div>
+        <div class="alert alert-info">
+          <span class="alert-icon">📏</span>
+          <div class="alert-text">
+            <strong>Diagnóstico: ≥ 3 dos 5 critérios abaixo</strong>
+            <span>Não há critério obrigatório isolado. O consenso harmonizado 2009 (Alberti et al., Circulation) é o mais utilizado atualmente.</span>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Critério</th><th>Ponto de corte (adulto/idoso)</th><th>Observação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>🔴 Circunferência abdominal</strong></td><td>Homens ≥ 90 cm / Mulheres ≥ 80 cm (Brasil/IDF)</td><td>Usar critérios étnicos; no idoso: cuidado com redistribuição de gordura</td></tr>
+            <tr><td><strong>Glicemia de jejum ↑</strong></td><td>≥ 100 mg/dL ou tratamento para DM</td><td>No idoso: hiperglicemia pós-prandial pode ser mais relevante</td></tr>
+            <tr><td><strong>Triglicerídeos ↑</strong></td><td>≥ 150 mg/dL ou tratamento específico</td><td>Associado a partículas LDL pequenas e densas</td></tr>
+            <tr><td><strong>HDL-c ↓</strong></td><td>Homens &lt; 40 mg/dL / Mulheres &lt; 50 mg/dL</td><td>Ou uso de medicação para HDL</td></tr>
+            <tr><td><strong>PA ↑</strong></td><td>≥ 130/85 mmHg ou uso de anti-hipertensivo</td><td>HAS muito prevalente no idoso — critério frequentemente presente</td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-note">
+          <span class="alert-icon">🔬</span>
+          <div class="alert-text">
+            <strong>Síndrome metabólica × fragilidade: a convergência geriátrica</strong>
+            <span>SM aumenta risco de fragilidade em 1,5–2× em idosos (metanálise, Aguilar-Navarro et al., 2023). Inflamageing e resistência insulínica são mecanismos comuns. A abordagem integrada (SM + fragilidade) é prioritária no idoso.</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="sm1" class="tab-content">
+        <div class="section-title">Fisiopatologia integrada</div>
+        <div class="flowchart">
+          <div class="flow-node" style="background:rgba(201,127,212,0.15);border:1px solid rgba(201,127,212,0.3)">
+            <strong>↑ Adiposidade visceral</strong> (envelhecimento, sedentarismo, transição nutricional)
+          </div>
+          <div class="flow-arrow"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:100%;max-width:580px">
+            <div class="flow-node" style="background:var(--card);border:1px solid var(--border);font-size:0.78rem">
+              <strong style="color:var(--accent4)">↑ AGL (Ácidos Graxos Livres)</strong><br>
+              Resistência insulínica hepática e muscular<br>
+              ↑ VLDL, ↑ TG, ↓ HDL
+            </div>
+            <div class="flow-node" style="background:var(--card);border:1px solid var(--border);font-size:0.78rem">
+              <strong style="color:var(--accent5)">↑ Inflamação crônica (SASP)</strong><br>
+              IL-6, TNF-α, adipocinas inflamatórias<br>
+              Disfunção endotelial
+            </div>
+          </div>
+          <div class="flow-arrow"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;width:100%;max-width:600px">
+            <div class="flow-node" style="background:rgba(232,100,74,0.1);border:1px solid rgba(232,100,74,0.3);font-size:0.75rem">DM2</div>
+            <div class="flow-node" style="background:rgba(232,100,74,0.1);border:1px solid rgba(232,100,74,0.3);font-size:0.75rem">DAC / AVC</div>
+            <div class="flow-node" style="background:rgba(232,100,74,0.1);border:1px solid rgba(232,100,74,0.3);font-size:0.75rem">Fragilidade / Sarcopenia</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="sm2" class="tab-content">
+        <div class="section-title">Manejo não-farmacológico — pilar principal</div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent3)">🏃 Atividade física</h4>
+            <ul>
+              <li>150 min/semana de atividade moderada (OMS 2022)</li>
+              <li>Resistência muscular: 2×/semana — prioridade no idoso</li>
+              <li>Reduz circunferência abdominal, melhora sensibilidade insulínica</li>
+              <li>Prescrição individualizada: adaptar à funcionalidade e fragilidade</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent1)">🥗 Dieta</h4>
+            <ul>
+              <li>Padrão mediterrâneo: melhor evidência para SM (RCT PREDIMED)</li>
+              <li>Reduzir ultraprocessados, açúcar livre, gordura saturada</li>
+              <li>Atenção à anorexia do envelhecimento: meta calórica adequada</li>
+              <li>Proteína: ≥ 1,0–1,2 g/kg/dia no idoso com SM para preservar massa muscular</li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert alert-info">
+          <span class="alert-icon">💊</span>
+          <div class="alert-text">
+            <strong>Tratamento farmacológico: por componente, não "da SM"</strong>
+            <span>Não há droga para "síndrome metabólica". Tratar individualmente: HAS (conforme SBC/SBH), DM2 (conforme ADA/SBGG), dislipidemia (conforme SBC). Metformina tem efeito preventivo modesto para DM em pré-diabéticos com SM.</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="sm3" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Sr. Antônio, 67 anos, pescador ribeirinho, sedentário, CA = 105 cm, PA = 138/88 mmHg, TG = 210 mg/dL, HDL = 32 mg/dL, GJ = 108 mg/dL. IMC = 29 kg/m². Sem uso de medicações. Qual é a primeira intervenção mais custo-efetiva para este paciente no contexto do SUS Amazônico?
+          </div>
+          <div class="quiz-options" id="quiz-sm-opts">
+            <div class="quiz-opt" onclick="answerQuiz('sm',0)"><span class="opt-letter">A</span> Iniciar imediatamente metformina, fibrato e anti-hipertensivo.</div>
+            <div class="quiz-opt" onclick="answerQuiz('sm',1)"><span class="opt-letter">B</span> Orientar mudança do estilo de vida (exercício + dieta), rever em 3–6 meses antes de decidir farmacoterapia.</div>
+            <div class="quiz-opt" onclick="answerQuiz('sm',2)"><span class="opt-letter">C</span> Solicitar avaliação cardiológica especializada com cateterismo.</div>
+            <div class="quiz-opt" onclick="answerQuiz('sm',3)"><span class="opt-letter">D</span> Nenhuma intervenção; aguardar desenvolvimento de critérios mais graves.</div>
+          </div>
+          <div class="quiz-feedback" id="quiz-sm-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 4 · OBESIDADE                         -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-4" class="topic-panel m4">
+    <div class="panel-header">
+      <div class="panel-icon-big">⚖️</div>
+      <div class="panel-header-text">
+        <h2>Obesidade no Idoso</h2>
+        <p>A obesidade no envelhecimento apresenta paradoxos clínicos importantes. A obesidade sarcopênica — combinação de excesso de gordura com perda de massa muscular — é o fenótipo mais prevalente e de pior prognóstico no idoso.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'ob0')">Epidemiologia & Paradoxo</button>
+        <button class="tab-btn" onclick="showTab(this,'ob1')">Fisiopatologia</button>
+        <button class="tab-btn" onclick="showTab(this,'ob2')">Diagnóstico</button>
+        <button class="tab-btn" onclick="showTab(this,'ob3')">Tratamento</button>
+        <button class="tab-btn" onclick="showTab(this,'ob4')">Caso Clínico</button>
+      </div>
+
+      <div id="ob0" class="tab-content visible">
+        <div class="section-title">Epidemiologia e o paradoxo da obesidade</div>
+        <div class="epidemio-strip">
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent5)">29%</div><div class="epi-label">Prevalência de obesidade em idosos brasileiros (VIGITEL 2023)</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent1)">+60%</div><div class="epi-label">Crescimento da obesidade em &gt; 65 anos desde 2006</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent4)">38%</div><div class="epi-label">Idosos com obesidade sarcopênica (consenso ESPEN 2023)</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent2)">2–4×</div><div class="epi-label">Maior risco de fragilidade na obesidade sarcopênica</div></div>
+        </div>
+        <div class="alert alert-note">
+          <span class="alert-icon">⚖️</span>
+          <div class="alert-text">
+            <strong>O paradoxo da obesidade no idoso (obesity paradox)</strong>
+            <span>Em idosos com ICC, DRC ou DPOC, IMC entre 25–30 kg/m² pode associar-se a menor mortalidade que IMC normal. Isso reflete que o IMC isolado é insuficiente: a composição corporal (músculo vs. gordura) e a funcionalidade são mais relevantes que o peso absoluto. Fontes: Lavie et al., JACC 2023; Corrada et al., Am J Clin Nutr.</span>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">🌳</span>
+          <div class="alert-text">
+            <strong>Amazônia: transição nutricional e dupla carga</strong>
+            <span>Comunidades ribeirinhas e indígenas do AM enfrentam simultaneamente desnutrição e obesidade (dupla carga). Populações indígenas amazônicas apresentam aceleração de DM2 e SM relacionada à obesidade visceral por mudança de padrão alimentar (ultraprocessados).</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="ob1" class="tab-content">
+        <div class="section-title">Fisiopatologia da obesidade sarcopênica</div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent5)">🔬 Mecanismos centrais</h4>
+            <ul>
+              <li>↓ GH e IGF-1 (somatopausa): perda de massa muscular e ↑ adipogênese</li>
+              <li>↓ Testosterona / estrogênio: favorece redistribuição para gordura visceral</li>
+              <li>Inflamageing (SASP): IL-6, TNF-α inibem síntese proteica muscular</li>
+              <li>Lipotoxicidade intramuscular: infiltração de gordura em fibras musculares (mioesteatose)</li>
+              <li>Resistência insulínica muscular: ↓ captação de glicose e aminoácidos</li>
+              <li>Sedentarismo: ciclo vicioso — ↑ gordura → ↓ capacidade física → ↑ gordura</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent4)">🔗 Consequências clínicas</h4>
+            <ul>
+              <li>Síndrome de fragilidade: risco 2–4× maior</li>
+              <li>↑ Quedas e fraturas por fraqueza muscular + peso excessivo</li>
+              <li>DM2 e SM: amplificação da resistência insulínica</li>
+              <li>Apneia obstrutiva do sono: prevalência até 70% em obesos > 65 anos</li>
+              <li>Osteoartrose: carga mecânica excessiva + inflamação adiposa periarticular</li>
+              <li>Incontinência urinária: pressão sobre assoalho pélvico</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="ob2" class="tab-content">
+        <div class="section-title">Diagnóstico e avaliação — além do IMC</div>
+        <div class="alert alert-info">
+          <span class="alert-icon">📏</span>
+          <div class="alert-text">
+            <strong>IMC no idoso: limitações importantes</strong>
+            <span>A compressão vertebral e a cifose reduzem a estatura, superestimando o IMC. No idoso, usar também circunferência abdominal (CA), circunferência da panturrilha ≥ 31 cm, e quando disponível bioimpedância ou DXA para composição corporal.</span>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Parâmetro</th><th>Ponto de corte</th><th>Significado</th></tr></thead>
+          <tbody>
+            <tr><td><strong>IMC</strong></td><td>≥ 27 kg/m² (SBGG/OMS para idosos)</td><td>Alguns guidelines usam 27 em vez de 30 para idosos</td></tr>
+            <tr><td><strong>Circunferência abdominal</strong></td><td>H ≥ 90 cm / M ≥ 80 cm (Brasil)</td><td>Proxy de adiposidade visceral — mais relevante que IMC</td></tr>
+            <tr><td><strong>Circunferência da panturrilha</strong></td><td>&lt; 31 cm = sarcopenia</td><td>Rastreamento simples, disponível no SUS</td></tr>
+            <tr><td><strong>Força de preensão</strong></td><td>H &lt; 27 kgf / M &lt; 16 kgf (EWGSOP2)</td><td>Critério para sarcopenia; componente da OS</td></tr>
+            <tr><td><strong>Bioimpedância / DXA</strong></td><td>% gordura + IMLG (índice massa livre de gordura)</td><td>Padrão para diagnóstico formal de obesidade sarcopênica</td></tr>
+          </tbody>
+        </table>
+        <div class="section-title">Diagnóstico de Obesidade Sarcopênica (ESPEN/EASO 2023)</div>
+        <div class="flowchart">
+          <div class="flow-node" style="background:rgba(232,100,74,0.15);border:1px solid rgba(232,100,74,0.3)">
+            <strong>Triagem:</strong> CP &lt; 31 cm + CA elevada ou IMC ≥ 27
+          </div>
+          <div class="flow-arrow"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;width:100%;max-width:560px">
+            <div class="flow-node" style="background:var(--card);border:1px solid var(--border);font-size:0.78rem">
+              <strong style="color:var(--accent5)">Obesidade confirmada:</strong><br>
+              % gordura elevado (H &gt; 30%, M &gt; 40%) por bioimpedância/DXA
+            </div>
+            <div class="flow-node" style="background:var(--card);border:1px solid var(--border);font-size:0.78rem">
+              <strong style="color:var(--accent4)">Sarcopenia confirmada:</strong><br>
+              ↓ Força + ↓ massa muscular (EWGSOP2)
+            </div>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node" style="background:rgba(201,127,212,0.15);border:1px solid rgba(201,127,212,0.3)">
+            <strong>Obesidade Sarcopênica</strong> — manejo integrado
+          </div>
+        </div>
+      </div>
+
+      <div id="ob3" class="tab-content">
+        <div class="section-title">Tratamento: abordagem integrada e individualizada</div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-text">
+            <strong>Cuidado com perda de peso em idosos frágeis!</strong>
+            <span>Perda de peso intencional pode agravar sarcopenia se não acompanhada de exercício de resistência e suporte proteico adequado. Meta: perda de gordura + preservação/ganho de músculo. Dieta hipocalórica isolada é insuficiente e potencialmente prejudicial.</span>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent3)">🏋️ Exercício — pilar central</h4>
+            <ul>
+              <li>Resistência muscular (musculação): 2–3×/semana — evidência A para preservar músculo</li>
+              <li>Aeróbico moderado: 150 min/semana — reduz gordura visceral</li>
+              <li>Progressivo e supervisionado: fisioterapia/educação física</li>
+              <li>Exercício &gt; dieta isolada na obesidade sarcopênica (Bouchonville et al., Obes Rev)</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent1)">🥩 Dieta: déficit com proteína preservada</h4>
+            <ul>
+              <li>Déficit calórico moderado: 250–500 kcal/dia (não agressivo)</li>
+              <li>Proteína: 1,2–1,5 g/kg/dia — obrigatório para preservar músculo</li>
+              <li>Distribuição proteica: 25–30g por refeição para síntese muscular máxima</li>
+              <li>Micronutrientes: vitamina D, cálcio, ômega-3 — papel no músculo e osso</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-title">Farmacoterapia: opções e cautelas</div>
+        <div class="drugs-grid">
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent4)">Semaglutida (GLP-1)</div>
+            <div class="dc-class">Novo para obesidade</div>
+            <div class="dc-note">STEP trials: redução 15–17% do peso. Preservar proteína e exercitar. Atenção à perda muscular. Custo alto, sem SUS.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent2)">Tirzepatida (GLP-1+GIP)</div>
+            <div class="dc-class">Mais recente (2023)</div>
+            <div class="dc-note">SURMOUNT trials: redução até 22%. Ainda sem dados robustos específicos para idosos frágeis.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent5)">Orlistat</div>
+            <div class="dc-class">Disponível SUS</div>
+            <div class="dc-note">Modesto (−3 kg). Efeitos GI inaceitáveis muitas vezes. Uso limitado em idosos.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--muted)">Cirurgia bariátrica</div>
+            <div class="dc-class">Casos selecionados</div>
+            <div class="dc-note">Possível em idosos selecionados (&lt; 75 anos, bom status funcional, sem fragilidade). Mortalidade aumentada acima de 70 anos.</div>
+          </div>
+        </div>
+        <div class="alert alert-note">
+          <span class="alert-icon">🔴</span>
+          <div class="alert-text">
+            <strong>Drogas a EVITAR (Beers 2023 / STOPP 2023)</strong>
+            <span>Anfetaminas, sibutramina, fentermina: contraindicados no idoso (HAS, arritmia, abuso). Diuréticos como emagrecedores: proibido. Laxantes para controle de peso: padrão alimentar prejudicial.</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="ob4" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Sra. Joana, 70 anos, IMC = 31 kg/m², circunferência da panturrilha = 28 cm, força de preensão = 14 kgf (M), velocidade de marcha = 0,7 m/s. Refere cansaço para atividades domésticas. DM2, HAS, sem doenças cardíacas. Qual o diagnóstico mais preciso e a intervenção prioritária?
+          </div>
+          <div class="quiz-options" id="quiz-ob-opts">
+            <div class="quiz-opt" onclick="answerQuiz('ob',0)"><span class="opt-letter">A</span> Obesidade simples — prescrever dieta hipocalórica restritiva (1000 kcal/dia) para perda rápida de peso.</div>
+            <div class="quiz-opt" onclick="answerQuiz('ob',1)"><span class="opt-letter">B</span> Obesidade sarcopênica — iniciar programa de exercício de resistência muscular 2×/semana + déficit calórico moderado + proteína ≥ 1,2g/kg/dia.</div>
+            <div class="quiz-opt" onclick="answerQuiz('ob',2)"><span class="opt-letter">C</span> Sarcopenia isolada — apenas suplementação proteica, sem restrição calórica.</div>
+            <div class="quiz-opt" onclick="answerQuiz('ob',3)"><span class="opt-letter">D</span> Peso normal para a idade — sem necessidade de intervenção nutricional ou de atividade física.</div>
+          </div>
+          <div class="quiz-feedback" id="quiz-ob-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 5 · OSTEOPOROSE                       -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-5" class="topic-panel m5">
+    <div class="panel-header">
+      <div class="panel-icon-big">🦴</div>
+      <div class="panel-header-text">
+        <h2>Osteoporose no Idoso</h2>
+        <p>A osteoporose afeta 30% das mulheres e 8% dos homens acima de 70 anos. A fratura de fêmur proximal é o evento sentinela com mortalidade de 20–30% no primeiro ano — prevenção e tratamento são urgências clínicas.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'os0')">Fisiopatologia</button>
+        <button class="tab-btn" onclick="showTab(this,'os1')">Diagnóstico & FRAX</button>
+        <button class="tab-btn" onclick="showTab(this,'os2')">Tratamento</button>
+        <button class="tab-btn" onclick="showTab(this,'os3')">Prevenção de Quedas</button>
+        <button class="tab-btn" onclick="showTab(this,'os4')">Caso Clínico</button>
+      </div>
+
+      <div id="os0" class="tab-content visible">
+        <div class="section-title">Fisiopatologia: desequilíbrio de remodelação óssea</div>
+        <div class="prose">
+          <p><strong>Remodelação óssea normal:</strong> equilíbrio entre osteoclastos (reabsorção) e osteoblastos (formação), regulado por RANK/RANKL/OPG, hormônios sexuais, PTH, vitamina D, IGF-1 e carga mecânica.</p>
+          <p><strong>No envelhecimento:</strong> <strong>↓ Estrogênio/testosterona</strong> → ↑ RANKL → ↑ atividade osteoclástica. Simultaneamente, <strong>↓ IGF-1</strong> e <strong>↓ carregamento mecânico</strong> → ↓ formação. Resultado: perda líquida de massa óssea.</p>
+        </div>
+        <div class="cards-row">
+          <div class="info-card"><div class="ic-label">Perda óssea anual</div><div class="ic-value" style="color:var(--accent6)">1–2%/ano</div><div class="ic-desc">Em mulheres pós-menopausa; nos primeiros 5 anos: até 3–5%/ano pela queda estrogênica</div></div>
+          <div class="info-card"><div class="ic-label">Vitamina D</div><div class="ic-value" style="color:var(--accent5)">↓ Sérica</div><div class="ic-desc">↓ Produção cutânea; ↓ absorção intestinal; ↑ PTH secundário → ↑ reabsorção óssea</div></div>
+          <div class="info-card"><div class="ic-label">PTH</div><div class="ic-value" style="color:var(--accent1)">↑ Secundário</div><div class="ic-desc">Hiperpara secundário por deficit de Ca²⁺ e Vit D — agrava perda trabecular e cortical</div></div>
+          <div class="info-card"><div class="ic-label">Microarquitetura</div><div class="ic-value" style="color:var(--muted)">Deteriora</div><div class="ic-desc">↓ Conectividade trabecular além da DMO: explica fraturas com DMO "normal" (fragilidade óssea)</div></div>
+        </div>
+      </div>
+
+      <div id="os1" class="tab-content">
+        <div class="section-title">Diagnóstico: densitometria e FRAX</div>
+        <table class="data-table">
+          <thead><tr><th>T-score (DXA)</th><th>Classificação (OMS)</th><th>Conduta</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge" style="background:rgba(110,203,138,0.2);color:var(--accent3)">≥ −1,0</span></td><td>Normal</td><td>Prevenção geral, Ca²⁺ e vit D</td></tr>
+            <tr><td><span class="badge" style="background:rgba(232,160,69,0.2);color:var(--accent1)">−1,0 a −2,5</span></td><td>Osteopenia</td><td>Calcular FRAX, considerar tratamento se risco alto</td></tr>
+            <tr><td><span class="badge" style="background:rgba(232,100,74,0.2);color:var(--accent5)">≤ −2,5</span></td><td>Osteoporose</td><td>Tratar</td></tr>
+            <tr><td><span class="badge" style="background:rgba(201,127,212,0.2);color:var(--accent4)">≤ −2,5 + fratura</span></td><td>Osteoporose grave</td><td>Tratar com urgência; excluir causas secundárias</td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-info">
+          <span class="alert-icon">🧮</span>
+          <div class="alert-text">
+            <strong>FRAX — Ferramenta de Avaliação de Risco de Fratura (WHO)</strong>
+            <span>Calcula probabilidade de fratura maior (coluna, fêmur, rádio, úmero) em 10 anos considerando 12 fatores clínicos ± DMO. Disponível em frax.shef.ac.uk. No Brasil: ponto de corte para tratamento: fratura de fêmur ≥ 3% ou fratura maior ≥ 20% em 10 anos (SBRheum 2023).</span>
+          </div>
+        </div>
+        <div class="section-title">Fatores de risco clínicos para FRAX</div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent6)">Fatores não modificáveis</h4>
+            <ul>
+              <li>Idade avançada (risco dobra a cada 7–8 anos)</li>
+              <li>Sexo feminino</li>
+              <li>Fratura prévia por fragilidade</li>
+              <li>História familiar de fratura de quadril</li>
+              <li>Raça branca (maior que negros, asiáticos têm menor DMO mas similar risco)</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent5)">Fatores modificáveis</h4>
+            <ul>
+              <li>Tabagismo, alcoolismo</li>
+              <li>Corticoterapia crônica (≥ 5 mg/dia prednisona ≥ 3 meses)</li>
+              <li>Baixo peso / IMC &lt; 20</li>
+              <li>Sedentarismo, imobilização</li>
+              <li>Deficiência de Ca²⁺ e vit D</li>
+              <li>Quedas recorrentes</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="os2" class="tab-content">
+        <div class="section-title">Tratamento farmacológico</div>
+        <div class="alert alert-success">
+          <span class="alert-icon">💊</span>
+          <div class="alert-text">
+            <strong>Suplementação universal no idoso com osteoporose</strong>
+            <span>Cálcio 1000–1200 mg/dia (preferir alimentar; suplemento se necessário) + Vitamina D 800–2000 UI/dia. Manter 25-OH-vit D sérico > 30 ng/mL. Disponíveis no SUS. NNT = 10–15 para prevenção de quedas e fraturas.</span>
+          </div>
+        </div>
+        <div class="drugs-grid">
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent6)">Alendronato</div>
+            <div class="dc-class">Bisfosfonato · 1ª linha · RENAME</div>
+            <div class="dc-note">70 mg/sem via oral. Reduz fratura vertebral 50% e fêmur 40%. GERD: usar com copo cheio, em pé 30 min. Disponível SUS.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent1)">Zoledronato</div>
+            <div class="dc-class">Bisfosfonato IV · anual</div>
+            <div class="dc-note">5 mg IV 1×/ano. Útil na má adesão oral ou GERD. HORIZON trial: −41% fratura quadril. Disponível em serviços especializados.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent4)">Denosumabe</div>
+            <div class="dc-class">Anti-RANKL · SC 60mg/6m</div>
+            <div class="dc-note">Risco fratura quadril −40%. Atenção: hipocalcemia ao iniciar. Efeito rebote ao suspender: bifosfonato por 1–2 anos após.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent2)">Teriparatida</div>
+            <div class="dc-class">PTH recombinante · anabólico</div>
+            <div class="dc-note">Para OS grave com falha ou alto risco. SC diária por 18–24 meses. Custo alto; APAC/CEAF no SUS. Seguido de bifosfonato.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--accent5)">Romosozumab</div>
+            <div class="dc-class">Anti-esclerostina · novo</div>
+            <div class="dc-note">Alta eficácia em fraturas vertebrais. Uso em OS muito grave. Cautela em pacientes com evento CV recente (FDA warning).</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name" style="color:var(--muted)">TRH (estrogênio)</div>
+            <div class="dc-class">Apenas casos selecionados</div>
+            <div class="dc-note">Não é 1ª linha para osteoporose. Considerar se sintomas climatéricos + osteopenia em mulheres jovens pós-menopausa. Risco trombótico e CA mama.</div>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-text">
+            <strong>Ostenonecrose de mandíbula e fraturas atípicas com bifosfonatos</strong>
+            <span>Raro mas grave: osteonecrose de mandíbula (especialmente com IV) e fraturas atípicas de fêmur (uso prolongado > 5 anos). Revisão após 5 anos: "drug holiday" se T-score > −2,5 e sem fratura recente (SBRheum/IOF 2023). Não suspender sem avaliação — risco de nova fratura real.</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="os3" class="tab-content">
+        <div class="section-title">Prevenção de quedas — intervenção multifatorial (OMS/NICE 2021)</div>
+        <div class="prose">
+          <p>A prevenção de quedas é parte integral do manejo da osteoporose. A fratura ocorre pela combinação de <strong>fragilidade óssea</strong> + <strong>queda</strong>. Prevenir quedas reduz fraturas independentemente da DMO.</p>
+        </div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent6)">Avaliação de risco de quedas</h4>
+            <ul>
+              <li>TUG (Timed Up and Go): ≥ 12 segundos = alto risco</li>
+              <li>Teste da caminhada de 4 metros: &lt; 0,8 m/s</li>
+              <li>Força de preensão: &lt; limiar EWGSOP2</li>
+              <li>Hipotensão ortostática (3 aferições PA)</li>
+              <li>Revisão de medicamentos: BZD, anti-histamínicos, diuréticos</li>
+              <li>Avaliação visual e auditiva</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent3)">Intervenções eficazes (NNT favorável)</h4>
+            <ul>
+              <li>Tai chi: redução 24% de quedas (metanálise Cochrane)</li>
+              <li>Exercício de equilíbrio e resistência: NNT ~10</li>
+              <li>Correção de hipovitaminose D (&gt; 30 ng/mL)</li>
+              <li>Adaptações domiciliares: barras, tapetes, iluminação</li>
+              <li>Revisão de polifarmácia (especialmente psicotrópicos)</li>
+              <li>Protetor de quadril: evidência em institucionalizados</li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert alert-note">
+          <span class="alert-icon">🌳</span>
+          <div class="alert-text">
+            <strong>Contexto Amazônico</strong>
+            <span>Populações ribeirinhas: deficiência de vitamina D paradoxal (abundância solar mas baixa exposição por cultura/vestimenta, dieta pobre em peixe gordo). Estrutura domiciliar de madeira (palafitas): risco adicional de quedas. NASF/eSF: visita domiciliar para prevenção.</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="os4" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Sra. Helena, 69 anos, pós-menopausa há 20 anos, branca, tabagista (20 maços/ano), DM2, corticoterapia (prednisona 7,5 mg/dia há 2 anos por DPOC). DXA: L2–L4 T-score = −2,7, colo femoral = −2,4. Vit D = 14 ng/mL. FRAX (sem BMD): 22% fratura maior, 5% fêmur. Qual o tratamento mais adequado?
+          </div>
+          <div class="quiz-options" id="quiz-os-opts">
+            <div class="quiz-opt" onclick="answerQuiz('os',0)"><span class="opt-letter">A</span> Apenas suplementar Ca²⁺ e vitamina D, reavaliar DXA em 2 anos.</div>
+            <div class="quiz-opt" onclick="answerQuiz('os',1)"><span class="opt-letter">B</span> Iniciar alendronato 70mg/semana + Ca²⁺ 1200mg/dia + Vit D 2000 UI/dia, cessar tabagismo, reavaliar DXA em 1–2 anos.</div>
+            <div class="quiz-opt" onclick="answerQuiz('os',2)"><span class="opt-letter">C</span> Iniciar terapia de reposição hormonal (estrogênio) como 1ª linha, pois a causa é menopausa.</div>
+            <div class="quiz-opt" onclick="answerQuiz('os',3)"><span class="opt-letter">D</span> Aguardar a ocorrência de uma fratura para iniciar tratamento, pois o FRAX ainda não é suficiente.</div>
+          </div>
+          <div class="quiz-feedback" id="quiz-os-fb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .content-area -->
+</div><!-- #app -->
+
+<script>
+// ── Module navigation ──
+function showModule(idx) {
+  document.querySelectorAll('.topic-panel').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.module-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('module-' + idx).classList.add('visible');
+  document.querySelectorAll('.module-btn')[idx].classList.add('active');
+  // Reset to first tab
+  const panel = document.getElementById('module-' + idx);
+  const tabs = panel.querySelectorAll('.tab-btn');
+  const contents = panel.querySelectorAll('.tab-content');
+  tabs.forEach(t => t.classList.remove('active'));
+  contents.forEach(c => c.classList.remove('visible'));
+  if (tabs[0]) tabs[0].classList.add('active');
+  if (contents[0]) contents[0].classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateProgress(idx);
+}
+
+// ── Tab navigation ──
+function showTab(btn, contentId) {
+  const panel = btn.closest('.panel-body');
+  panel.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  panel.querySelectorAll('.tab-content').forEach(c => c.classList.remove('visible'));
+  btn.classList.add('active');
+  document.getElementById(contentId).classList.add('visible');
+}
+
+// ── Progress bar ──
+function updateProgress(idx) {
+  document.getElementById('progressFill').style.width = ((idx + 1) / 6 * 100) + '%';
+}
+
+// ── Quiz answers ──
+const quizData = {
+  t: {
+    correct: 2,
+    feedback: '✅ <strong>Correto — Alternativa C</strong><br><br>Dona Raimunda apresenta hipotireoidismo primário franco (TSH 12,8 mUI/L, T4L baixo) com tireoidite de Hashimoto (Anti-TPO positivo) e bócio — provável deficiência de iodo em comunidade ribeirinha. A conduta correta é iniciar levotiroxina em dose baixa (25 µg) com titulação cuidadosa (idosa, PA elevada), alvo de TSH 3–6 mUI/L pela idade. US de tireoide para avaliar nódulos associados ao bócio. Integrar ao PNAN para suplementação de iodo na comunidade. Alternativa A incorreta: TSH 12,8 com T4L baixo não é elevação fisiológica — requer tratamento. Alternativa B: dose excessiva e alvo muito baixo aumentam risco de FA e osteoporose. Alternativa D: cintilografia não é o próximo passo em hipotireoidismo manifesto.',
+    wrong: '❌ <strong>Incorreto.</strong> Revise: TSH 12,8 com T4L baixo = hipotireoidismo manifesto, não subclínico. A conduta é iniciar levotiroxina em dose baixa com titulação cuidadosa. Considere o contexto regional: bócio endêmico + deficiência de iodo em populações ribeirinhas do AM.'
+  },
+  d: {
+    correct: 1,
+    feedback: '✅ <strong>Correto — Alternativa B</strong><br><br>Sr. Benedito tem HbA1c de 6,1% com múltiplos hipoglicemiantes — meta excessivamente rígida para um octogenário frágil com quedas. A glibenclamida (sulfoniureia de longa duração) é Beers 2023 EVITAR no idoso: alto risco de hipoglicemia grave. A empagliflozina tem benefício CV comprovado em ICFEr (EMPEROR-Reduced) — exatamente a condição de Benedito. TFG 45: empagliflozina pode ser usada (limite ≥ 20 para ICFEr). Metformina pode continuar com TFG 45 (suspender se &lt; 30). Nova meta HbA1c: ~8% para idoso frágil com ICFEr. Alternativa A (manter glibenclamida) é a conduta mais perigosa deste caso.',
+    wrong: '❌ <strong>Incorreto.</strong> A questão central é: HbA1c 6,1% em octogenário com quedas = hipoglicemia por tratamento excessivo. Glibenclamida é Beers 2023 contraindicada. Revise metas individualizadas e deprescrição no idoso frágil com DM2.'
+  },
+  dl: {
+    correct: 1,
+    feedback: '✅ <strong>Correto — Alternativa B</strong><br><br>Sra. Conceição reúne 3 critérios independentes para deprescrição da estatina: (1) critério STOPP H4 — demência avançada com prognóstico < 1 ano; (2) miopatia em curso (CPK 3× LSN + sintomas); (3) LDL já controlado. A miopatia por estatina é dose-dependente e requer suspensão imediata com CPK elevada + sintomas. Para pacientes em cuidados paliativos, o benefício CV de longo prazo não se aplica — prevenção quaternária e qualidade de vida são prioritários (NICE NG62, STOPP/START 2023). Alternativas A e C: aumentar/trocar estatina com miopatia e CDR 3 é contraindicado. Alternativa D: AINEs em idosa com possível demência = risco de nefrotoxicidade, HDA.',
+    wrong: '❌ <strong>Incorreto.</strong> Revise: miopatia com CPK 3× + sintomas = indicação de suspensão da estatina. Em demência avançada, critério STOPP H4 indica deprescrição. Prevenção quaternária é o princípio central aqui.'
+  },
+  sm: {
+    correct: 1,
+    feedback: '✅ <strong>Correto — Alternativa B</strong><br><br>Sr. Antônio preenche critérios para síndrome metabólica (CA elevada, PA limítrofe, TG elevado, HDL baixo, glicemia de jejum alterada = 5/5 componentes). No entanto, a PA é apenas 138/88 (não alcança o limiar de tratamento isolado), a glicemia é pré-diabética, e não há DM ou DAC estabelecida. Neste perfil, as diretrizes (IDF, SBC, SBH, ADA) recomendam intervenção intensiva no estilo de vida por 3–6 meses antes de farmacoterapia. No contexto ribeirinho amazônico, adaptações práticas são fundamentais: atividade física culturalmente adaptada (remo, caminhada na várzea), dieta baseada nos alimentos disponíveis localmente. Alternativa A seria precoce e sobremedicalização.',
+    wrong: '❌ <strong>Incorreto.</strong> Revise: síndrome metabólica sem DM ou DAC estabelecida = mudança de estilo de vida como primeiro passo. Farmacoterapia é escalada por componente se não houver resposta em 3–6 meses. Prevenção quaternária: não medicalizar precocemente.'
+  },
+  ob: {
+    correct: 1,
+    feedback: '✅ <strong>Correto — Alternativa B</strong><br><br>Sra. Joana apresenta o quadro clássico de <strong>obesidade sarcopênica</strong>: IMC elevado (31) + CP baixa (28 cm, critério sarcopenia) + força de preensão baixa (14 kgf, abaixo do limiar EWGSOP2 para mulheres) + velocidade de marcha reduzida (0,7 m/s). Diagnóstico: ESPEN/EASO 2023. A intervenção prioritária é o exercício de resistência muscular — evidência nível A para preservar músculo enquanto reduz gordura. Dieta hipocalórica moderada (não restritiva!) com proteína ≥ 1,2 g/kg/dia. Alternativa A (dieta restritiva 1000 kcal) agravaria a sarcopenia. O "obesity paradox" explica por que perda rápida de peso em idosos pode piorar o prognóstico.',
+    wrong: '❌ <strong>Incorreto.</strong> Revise: os parâmetros da paciente indicam obesidade sarcopênica (excesso de gordura + sarcopenia simultâneos). A intervenção correta combina exercício de resistência + déficit calórico moderado + proteína adequada — não dieta restritiva isolada.'
+  },
+  os: {
+    correct: 1,
+    feedback: '✅ <strong>Correto — Alternativa B</strong><br><br>Sra. Helena tem osteoporose densitométrica confirmada (T-score ≤ −2,5) + múltiplos fatores de risco de altíssimo impacto: corticoterapia crônica (indicação independente de tratamento), tabagismo, DM2, FRAX de fratura maior 22% (> limiar de 20% para Brasil). O tratamento de 1ª linha é bifosfonato (alendronato) + Ca²⁺ + Vit D + correção do tabagismo. Vit D sérica de 14 ng/mL: repor agressivamente (dose de ataque 50.000 UI/semana por 8 semanas, depois manutenção). A corticoterapia crônica em si já justifica terapia antirreabsortiva independentemente da DMO (GIOP: Glucocorticoid-Induced Osteoporosis, ACR 2022). Alternativa A insuficiente. Alternativa C (TRH) não é 1ª linha e tem riscos adicionais. Alternativa D nunca: aguardar fratura é falha assistencial.',
+    wrong: '❌ <strong>Incorreto.</strong> Revise: osteoporose densitométrica + corticoterapia crônica = tratamento imediato com bifosfonato (não aguardar fratura). FRAX 22% ultrapassa limiar brasileiro. TRH não é 1ª linha. Ca²⁺ e vit D são adjuvantes obrigatórios.'
+  }
+};
+
+function answerQuiz(module, optIdx) {
+  const data = quizData[module];
+  const container = document.querySelector('#quiz-' + module + '-opts') ||
+    document.querySelector(`[id^="quiz-"] .quiz-options`);
+
+  // Find the correct quiz container
+  let optsEl = null;
+  let fbEl = null;
+  const allOpts = document.querySelectorAll('.quiz-options');
+  const allFb = document.querySelectorAll('.quiz-feedback');
+
+  // Find active module's quiz
+  const activePanel = document.querySelector('.topic-panel.visible');
+  if (!activePanel) return;
+  const activeTab = activePanel.querySelector('.tab-content.visible');
+  if (!activeTab) return;
+  optsEl = activeTab.querySelector('.quiz-options');
+  fbEl = activeTab.querySelector('.quiz-feedback');
+  if (!optsEl || !fbEl) return;
+
+  if (optsEl.dataset.answered) return;
+  optsEl.dataset.answered = true;
+
+  const opts = optsEl.querySelectorAll('.quiz-opt');
+  opts.forEach((o, i) => {
+    if (i === data.correct) o.classList.add('correct');
+    else if (i === optIdx && optIdx !== data.correct) o.classList.add('wrong');
+    o.style.pointerEvents = 'none';
+  });
+
+  const isCorrect = optIdx === data.correct;
+  fbEl.innerHTML = isCorrect ? data.feedback : data.wrong;
+  fbEl.style.background = isCorrect ? 'rgba(110,203,138,0.1)' : 'rgba(232,100,74,0.1)';
+  fbEl.style.border = isCorrect ? '1px solid rgba(110,203,138,0.3)' : '1px solid rgba(232,100,74,0.3)';
+  fbEl.style.padding = '1rem';
+  fbEl.style.borderRadius = '8px';
+  fbEl.style.fontSize = '0.82rem';
+  fbEl.style.lineHeight = '1.65';
+  fbEl.style.color = 'var(--muted)';
+  fbEl.classList.add('show');
+}
+
+// ── Scroll progress ──
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  const progress = (window.scrollY / total) * 100;
+  // Blend with module progress
+  const activeIdx = [...document.querySelectorAll('.module-btn')].findIndex(b => b.classList.contains('active'));
+  const base = (activeIdx / 6) * 100;
+  document.getElementById('progressFill').style.width = Math.max(base, Math.min(100, progress)) + '%';
+});
+
+// Init
+updateProgress(0);
+</script>
+</body>
+</html>
