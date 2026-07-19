@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Processo de Envelhecimento · Hub de Estudos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a; --surface: #111827; --card: #1a2235;
+    --border: rgba(255,255,255,0.07);
+    --accent1: #e8a045; --accent2: #5b9bd5; --accent3: #6ecb8a;
+    --accent4: #c97fd4; --accent5: #e8644a; --accent6: #f0c94a; --accent7: #4fd1c5;
+    --text: #e8eaf0; --muted: #8899b0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 10%, rgba(91,155,213,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 80%, rgba(201,127,212,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 60% 40%, rgba(79,209,197,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .wrap { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 4rem 2rem 5rem; }
+  .kicker { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.25em; color: var(--accent2); text-transform: uppercase; margin-bottom: 1rem; }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.2rem; }
+  h1 em { font-style: italic; color: var(--accent2); }
+  .lead { max-width: 640px; font-size: 1rem; color: var(--muted); line-height: 1.75; margin-bottom: 1rem; }
+  .meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 3rem; font-family: 'DM Mono', monospace; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
+  .mod {
+    display: block; text-decoration: none; color: inherit;
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 1.6rem; position: relative; overflow: hidden; transition: all 0.25s ease;
+  }
+  .mod::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--mc); }
+  .mod:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); border-color: var(--mc); }
+  .mod .icon { font-size: 2.4rem; margin-bottom: 0.8rem; display: block; }
+  .mod .status { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mc); margin-bottom: 0.5rem; }
+  .mod h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .mod p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+  .mod .tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .mod .t { font-size: 0.65rem; padding: 0.2rem 0.6rem; border-radius: 100px; border: 1px solid var(--border); color: var(--muted); }
+  .mod .arrow { position: absolute; bottom: 1.4rem; right: 1.6rem; font-size: 1.1rem; color: var(--mc); opacity: 0; transition: all 0.2s; }
+  .mod:hover .arrow { opacity: 1; transform: translateX(3px); }
+  .endo { --mc: var(--accent1); }
+  .neuro { --mc: var(--accent2); }
+  footer { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--muted); line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">Processo de Envelhecimento · 3º Período · Medicina</div>
+  <h1>Hub de Estudos do<br><em>Envelhecimento</em></h1>
+  <p class="lead">
+    Materiais interativos, baseados em evidência e contextualizados ao SUS e à realidade
+    amazônica, para o estudo integrado do envelhecimento humano. Cada módulo reúne
+    fisiopatologia, diagnóstico, manejo e casos clínicos interativos.
+  </p>
+  <div class="meta">Profa. Dra. Gabriela Russo · Faculdade Santa Teresa · Manaus, AM</div>
+
+  <div class="grid">
+    <a class="mod neuro" href="neurociencias.html">
+      <span class="icon">🧠</span>
+      <div class="status">● Disponível</div>
+      <h2>Neurociências &amp; Envelhecimento</h2>
+      <p>Cérebro que envelhece, neurotransmissão, demências, Parkinson, doença cerebrovascular, sono &amp; delirium e prevenção. 7 módulos com casos clínicos.</p>
+      <div class="tags"><span class="t">Demências</span><span class="t">Parkinson</span><span class="t">AVC</span><span class="t">Delirium</span><span class="t">Prevenção</span></div>
+      <span class="arrow">→</span>
+    </a>
+    <a class="mod endo" href="index.html">
+      <span class="icon">🦋</span>
+      <div class="status">● Disponível</div>
+      <h2>Sistema Endócrino no Envelhecimento</h2>
+      <p>Tireoide, diabetes, dislipidemia, síndrome metabólica, obesidade sarcopênica e osteoporose. 6 módulos com casos clínicos e quizzes.</p>
+      <div class="tags"><span class="t">Tireoide</span><span class="t">Diabetes</span><span class="t">Osteoporose</span><span class="t">Obesidade</span></div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+
+  <footer>
+    Ferramentas educacionais de apoio ao ensino da disciplina Processo de Envelhecimento.
+    Conteúdo com finalidade didática — não substitui diretrizes clínicas vigentes nem julgamento profissional.
+    Perspectiva crítica, anti-ageísta e biopsicossocial, ancorada no SUS e no contexto amazônico.
+  </footer>
+</div>
+</body>
+</html>

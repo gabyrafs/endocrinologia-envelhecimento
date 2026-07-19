@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neurociências e Envelhecimento</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --card: #1a2235;
+    --border: rgba(255,255,255,0.07);
+    --accent1: #e8a045;
+    --accent2: #5b9bd5;
+    --accent3: #6ecb8a;
+    --accent4: #c97fd4;
+    --accent5: #e8644a;
+    --accent6: #f0c94a;
+    --accent7: #4fd1c5;
+    --text: #e8eaf0;
+    --muted: #8899b0;
+    --highlight: rgba(91,155,213,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 10%, rgba(91,155,213,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 80%, rgba(201,127,212,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 60% 40%, rgba(79,209,197,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── LAYOUT ── */
+  #app { position: relative; z-index: 1; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 2rem 4rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,14,26,0.92);
+    backdrop-filter: blur(16px);
+  }
+  .logo-area { display: flex; flex-direction: column; gap: 2px; }
+  .logo-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent2);
+    text-transform: uppercase;
+  }
+  .logo-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .header-meta {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.6;
+  }
+  .progress-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 3px; background: rgba(255,255,255,0.05); z-index: 200;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent4));
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 5rem 4rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .hero-kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.35s;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent2);
+  }
+  .hero-desc {
+    max-width: 640px;
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.5s;
+  }
+  .hero-tags {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.65s;
+  }
+  .tag {
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    border: 1px solid;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── NAV MODULES ── */
+  .modules-nav {
+    padding: 2rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.8s;
+  }
+  .modules-nav h2 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+  }
+  .module-btn {
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: left;
+  }
+  .module-btn:hover, .module-btn.active {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .module-btn .mb-icon { font-size: 1.4rem; margin-bottom: 0.4rem; display: block; }
+  .module-btn .mb-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.1rem;
+  }
+  .module-btn .mb-sub {
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  /* ── MAIN CONTENT ── */
+  .content-area {
+    padding: 1.5rem 4rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── TOPIC PANELS ── */
+  .topic-panel { display: none; }
+  .topic-panel.visible {
+    display: block;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 2rem 2.5rem;
+    background: var(--card);
+    border-radius: 16px 16px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .panel-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+  }
+  .panel-icon-big { font-size: 3rem; flex-shrink: 0; }
+  .panel-header-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .panel-header-text p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 600px;
+  }
+  .panel-body {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
+  }
+
+  /* ── TABS ── */
+  .tabs-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 0.9rem 1.4rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--muted);
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--text); border-bottom-color: currentColor; }
+  .tab-content { display: none; padding: 2rem 2.5rem; }
+  .tab-content.visible { display: block; animation: fadeIn 0.3s ease; }
+
+  /* ── CONTENT BLOCKS ── */
+  .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .prose p {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .prose p strong { color: var(--text); font-weight: 600; }
+  .prose ul {
+    list-style: none;
+    margin-bottom: 1rem;
+  }
+  .prose ul li {
+    font-size: 0.88rem;
+    color: var(--muted);
+    padding: 0.3rem 0 0.3rem 1.2rem;
+    position: relative;
+    line-height: 1.6;
+  }
+  .prose ul li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--accent2);
+    font-size: 0.75rem;
+  }
+
+  /* ── INFO CARDS ── */
+  .cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .info-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+  }
+  .info-card .ic-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .info-card .ic-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+  .info-card .ic-desc {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── ALERT BOXES ── */
+  .alert {
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    display: flex;
+    gap: 0.75rem;
+  }
+  .alert-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .alert-text strong { display: block; margin-bottom: 0.2rem; font-size: 0.82rem; }
+  .alert-text span { color: var(--muted); font-size: 0.82rem; }
+  .alert-warning { background: rgba(232,100,74,0.1); border: 1px solid rgba(232,100,74,0.25); }
+  .alert-info { background: rgba(91,155,213,0.1); border: 1px solid rgba(91,155,213,0.25); }
+  .alert-success { background: rgba(110,203,138,0.1); border: 1px solid rgba(110,203,138,0.25); }
+  .alert-note { background: rgba(232,160,69,0.1); border: 1px solid rgba(232,160,69,0.25); }
+
+  /* ── TABLE ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-bottom: 1.5rem;
+  }
+  .data-table th {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table td strong { color: var(--text); }
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 100px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .quiz-q {
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+    color: var(--text);
+  }
+  .quiz-q .q-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent2);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .quiz-opt {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 0.83rem;
+    color: var(--muted);
+    transition: all 0.2s;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .quiz-opt:hover { border-color: rgba(255,255,255,0.15); color: var(--text); background: rgba(255,255,255,0.04); }
+  .quiz-opt.correct { border-color: var(--accent3); background: rgba(110,203,138,0.12); color: var(--text); }
+  .quiz-opt.wrong { border-color: var(--accent5); background: rgba(232,100,74,0.1); color: var(--text); }
+  .quiz-opt .opt-letter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .quiz-feedback {
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; animation: fadeIn 0.3s ease; }
+  .quiz-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1rem;
+    font-size: 0.78rem; color: var(--muted);
+  }
+  .btn {
+    padding: 0.55rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary {
+    background: var(--accent2);
+    color: #0a0e1a;
+  }
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-ghost {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.2); }
+
+  /* ── HIGHLIGHTS TWO-COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.5rem; }
+  @media(max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  .highlight-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+  }
+  .highlight-box h4 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .highlight-box ul { list-style: none; }
+  .highlight-box ul li {
+    font-size: 0.8rem;
+    color: var(--muted);
+    padding: 0.25rem 0 0.25rem 1rem;
+    position: relative;
+    line-height: 1.55;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .highlight-box ul li:last-child { border-bottom: none; }
+  .highlight-box ul li::before {
+    content: '·';
+    position: absolute; left: 0;
+    font-size: 1.2rem; line-height: 1;
+  }
+
+  /* ── FLOWCHART ── */
+  .flowchart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin: 1.5rem 0;
+  }
+  .flow-node {
+    padding: 0.7rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-align: center;
+    min-width: 200px;
+    max-width: 320px;
+  }
+  .flow-arrow {
+    width: 2px;
+    height: 28px;
+    background: var(--border);
+    position: relative;
+  }
+  .flow-arrow::after {
+    content: '▼';
+    position: absolute;
+    bottom: -8px;
+    left: 50%; transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .flow-row { display: flex; gap: 1rem; align-items: flex-start; }
+
+  /* ── EPIDEMIO BOX ── */
+  .epidemio-strip {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .epi-item { flex: 1; min-width: 120px; }
+  .epi-item .epi-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+  .epi-item .epi-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ── DRUGS GRID ── */
+  .drugs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; }
+  .drug-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  .drug-card .dc-name { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.15rem; }
+  .drug-card .dc-class { font-size: 0.68rem; color: var(--muted); margin-bottom: 0.5rem; font-family: 'DM Mono', monospace; }
+  .drug-card .dc-note { font-size: 0.72rem; color: var(--muted); line-height: 1.45; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width: 768px) {
+    header { padding: 1rem 1.5rem; }
+    .hero, .modules-nav, .content-area { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .modules-grid { grid-template-columns: repeat(3, 1fr); }
+    .cards-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── COLOR ACCENTS PER MODULE ── */
+  .m0 { --mc: var(--accent2); }
+  .m1 { --mc: var(--accent1); }
+  .m2 { --mc: var(--accent4); }
+  .m3 { --mc: var(--accent3); }
+  .m4 { --mc: var(--accent5); }
+  .m5 { --mc: var(--accent6); }
+  .m6 { --mc: var(--accent7); }
+
+  .module-btn:hover .mb-title, .module-btn.active .mb-title { color: var(--mc); }
+  .module-btn.active { border-color: var(--mc); box-shadow: 0 0 0 1px var(--mc), 0 8px 24px rgba(0,0,0,0.3); }
+  .panel-header::before { background: var(--mc); }
+  .section-title { color: var(--mc); }
+  .highlight-box ul li::before { color: var(--mc); }
+  .info-card::before { background: var(--mc); opacity: 0.6; }
+
+</style>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div id="app">
+
+<!-- HEADER -->
+<header>
+  <div class="logo-area">
+    <span class="logo-tag">Processo de Envelhecimento · 3º Período</span>
+    <span class="logo-title">Neurociências &amp; Envelhecimento</span>
+  </div>
+  <div class="header-meta">
+    Profa. Dra. Gabriela Russo<br>
+    Faculdade Santa Teresa · Manaus, AM
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-kicker">Módulo Neurológico · Diretrizes 2020–2025</div>
+  <h1>Neurociências<br>do <em>Envelhecimento</em></h1>
+  <p class="hero-desc">
+    O cérebro que envelhece não é um cérebro em declínio inevitável. Este módulo integra
+    neurobiologia, distinção entre senescência e doença, evidência de qualidade e aplicabilidade
+    ao SUS Amazônico — com uma perspectiva crítica, anti-ageísta e casos clínicos interativos.
+  </p>
+  <div class="hero-tags">
+    <span class="tag" style="color:var(--accent2);border-color:rgba(91,155,213,0.3)">Cérebro que envelhece</span>
+    <span class="tag" style="color:var(--accent1);border-color:rgba(232,160,69,0.3)">Neurotransmissão</span>
+    <span class="tag" style="color:var(--accent4);border-color:rgba(201,127,212,0.3)">Demências</span>
+    <span class="tag" style="color:var(--accent3);border-color:rgba(110,203,138,0.3)">Parkinson</span>
+    <span class="tag" style="color:var(--accent5);border-color:rgba(232,100,74,0.3)">Doença cerebrovascular</span>
+    <span class="tag" style="color:var(--accent6);border-color:rgba(240,201,74,0.3)">Sono &amp; Delirium</span>
+    <span class="tag" style="color:var(--accent7);border-color:rgba(79,209,197,0.3)">Reserva &amp; Prevenção</span>
+  </div>
+</div>
+
+<!-- MODULE NAV -->
+<div class="modules-nav">
+  <h2>Selecione o módulo</h2>
+  <div class="modules-grid">
+    <button class="module-btn m0 active" onclick="showModule(0)">
+      <span class="mb-icon">🧠</span>
+      <span class="mb-title">Cérebro que Envelhece</span>
+      <span class="mb-sub">Neurobiologia, reserva cognitiva</span>
+    </button>
+    <button class="module-btn m1" onclick="showModule(1)">
+      <span class="mb-icon">⚡</span>
+      <span class="mb-title">Neurotransmissão</span>
+      <span class="mb-sub">Neuroquímica, anticolinérgicos, Beers</span>
+    </button>
+    <button class="module-btn m2" onclick="showModule(2)">
+      <span class="mb-icon">🧩</span>
+      <span class="mb-title">Cognição &amp; Demências</span>
+      <span class="mb-sub">CCL, Alzheimer, diagnóstico</span>
+    </button>
+    <button class="module-btn m3" onclick="showModule(3)">
+      <span class="mb-icon">🎯</span>
+      <span class="mb-title">Parkinson</span>
+      <span class="mb-sub">Distúrbios do movimento</span>
+    </button>
+    <button class="module-btn m4" onclick="showModule(4)">
+      <span class="mb-icon">🩸</span>
+      <span class="mb-title">Cerebrovascular</span>
+      <span class="mb-sub">AVC, demência vascular</span>
+    </button>
+    <button class="module-btn m5" onclick="showModule(5)">
+      <span class="mb-icon">🌙</span>
+      <span class="mb-title">Sono &amp; Delirium</span>
+      <span class="mb-sub">Delirium, neuropsiquiatria</span>
+    </button>
+    <button class="module-btn m6" onclick="showModule(6)">
+      <span class="mb-icon">🛡️</span>
+      <span class="mb-title">Prevenção</span>
+      <span class="mb-sub">Reserva cognitiva, Lancet 2024</span>
+    </button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content-area">
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 0 · CÉREBRO QUE ENVELHECE               -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-0" class="topic-panel m0 visible">
+    <div class="panel-header">
+      <div class="panel-icon-big">🧠</div>
+      <div class="panel-header-text">
+        <h2>O Cérebro que Envelhece</h2>
+        <p>O envelhecimento cerebral é heterogêneo e plástico. Distinguir a senescência fisiológica da neurodegeneração patológica é a competência central da neurologia geriátrica — e o antídoto ao ageísmo diagnóstico.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'ce0')">Neurobiologia</button>
+        <button class="tab-btn" onclick="showTab(this,'ce1')">Cognição normal vs. patológica</button>
+        <button class="tab-btn" onclick="showTab(this,'ce2')">Reserva cognitiva</button>
+        <button class="tab-btn" onclick="showTab(this,'ce3')">Caso Clínico</button>
+      </div>
+
+      <!-- Neurobiologia -->
+      <div id="ce0" class="tab-content visible">
+        <div class="section-title">Alterações neurobiológicas do envelhecimento</div>
+        <div class="cards-row">
+          <div class="info-card">
+            <div class="ic-label">Volume cerebral</div>
+            <div class="ic-value" style="color:var(--accent5)">↓ ~5%/década</div>
+            <div class="ic-desc">Redução após os 40 anos, mais acentuada em córtex pré-frontal e hipocampo. Perda predominante de conexões sinápticas, não de corpos neuronais.</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Neurogênese</div>
+            <div class="ic-value" style="color:var(--accent3)">Preservada</div>
+            <div class="ic-desc">Persiste no giro denteado do hipocampo ao longo da vida, ainda que reduzida — base biológica da plasticidade no idoso.</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Substância branca</div>
+            <div class="ic-value" style="color:var(--accent1)">↓ Integridade</div>
+            <div class="ic-desc">Desmielinização e hiperintensidades (leucoaraiose) na RM. Correlato de lentificação do processamento e disfunção executiva.</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Inflammaging</div>
+            <div class="ic-value" style="color:var(--accent4)">↑ Neuroinflamação</div>
+            <div class="ic-desc">Ativação microglial de baixo grau, estresse oxidativo e disfunção mitocondrial — terreno comum às doenças neurodegenerativas.</div>
+          </div>
+        </div>
+        <div class="alert alert-note">
+          <span class="alert-icon">📌</span>
+          <div class="alert-text">
+            <strong>Envelhecimento ≠ neurodegeneração</strong>
+            <span>A perda cognitiva significativa NÃO é parte inerente do envelhecimento normal. Atribuir déficits a "coisa da idade" é ageísmo diagnóstico e adia intervenções eficazes. Esquecer onde deixou a chave é senescência; esquecer para que serve a chave é sinal de alarme.</span>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent3)">✅ O que muda de forma fisiológica</h4>
+            <ul>
+              <li>Lentificação da velocidade de processamento</li>
+              <li>Redução da memória de trabalho e atenção dividida</li>
+              <li>Maior dificuldade em evocar nomes ("ponta da língua")</li>
+              <li>Declínio da fluência verbal fonêmica</li>
+              <li>Menor eficiência da memória episódica (aprender listas novas)</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent2)">🛡️ O que se preserva ou melhora</h4>
+            <ul>
+              <li>Inteligência cristalizada (vocabulário, conhecimento acumulado)</li>
+              <li>Memória semântica e memória de longo prazo consolidada</li>
+              <li>Regulação emocional e "efeito de positividade"</li>
+              <li>Sabedoria, julgamento social e resolução de problemas contextualizados</li>
+              <li>Habilidades procedurais bem treinadas</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cognição normal vs patológica -->
+      <div id="ce1" class="tab-content">
+        <div class="section-title">Distinguindo o normal do patológico</div>
+        <table class="data-table">
+          <thead><tr><th>Domínio</th><th>Envelhecimento normal</th><th>Sinal de alarme (patológico)</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Memória</strong></td><td>Esquece detalhes, lembra depois; queixa preservando funcionalidade</td><td>Esquece eventos inteiros; repete perguntas; perde-se em lugares conhecidos</td></tr>
+            <tr><td><strong>Linguagem</strong></td><td>Dificuldade ocasional para achar palavras</td><td>Troca palavras, discurso vazio, não compreende instruções</td></tr>
+            <tr><td><strong>Funções executivas</strong></td><td>Mais lento em tarefas complexas, mas conclui</td><td>Incapaz de gerir finanças, medicações, planejar refeições</td></tr>
+            <tr><td><strong>Orientação</strong></td><td>Preservada</td><td>Desorientação temporal e depois espacial</td></tr>
+            <tr><td><strong>Funcionalidade (AVDs)</strong></td><td>Independente</td><td>Perda de AVDs instrumentais e depois básicas</td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-text">
+            <strong>A funcionalidade é o divisor de águas</strong>
+            <span>O critério que separa comprometimento cognitivo leve (CCL) de demência é o impacto nas atividades de vida diária. Sempre avalie AVDs instrumentais (Lawton) e básicas (Katz), e ouça o informante — a queixa isolada do paciente subestima e superestima em direções diferentes.</span>
+          </div>
+        </div>
+        <div class="prose">
+          <p><strong>Sempre exclua causas reversíveis antes de rotular o declínio como neurodegenerativo:</strong> hipotireoidismo, deficiência de B12 e folato, depressão (pseudodemência), efeito de fármacos (anticolinérgicos, benzodiazepínicos), distúrbios metabólicos, apneia do sono, déficit sensorial (audição e visão) e delirium sobreposto.</p>
+        </div>
+      </div>
+
+      <!-- Reserva cognitiva -->
+      <div id="ce2" class="tab-content">
+        <div class="section-title">Reserva cognitiva e reserva cerebral (Stern)</div>
+        <div class="prose">
+          <p><strong>Reserva cerebral</strong> é o capital estrutural — número de neurônios e sinapses. <strong>Reserva cognitiva</strong> é a capacidade funcional de recrutar redes alternativas para compensar a lesão. Ela explica por que dois cérebros com a mesma carga de patologia de Alzheimer podem ter expressões clínicas muito diferentes.</p>
+        </div>
+        <div class="epidemio-strip">
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent2)">Escolaridade</div><div class="epi-label">Cada ano de estudo eleva o limiar clínico da demência</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent3)">Bilinguismo</div><div class="epi-label">Associado a atraso de ~4–5 anos no início de sintomas</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent4)">Atividade cognitiva</div><div class="epi-label">Engajamento intelectual e social ao longo da vida</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent1)">Atividade física</div><div class="epi-label">Promove neurogênese, BDNF e angiogênese cerebral</div></div>
+        </div>
+        <div class="alert alert-info">
+          <span class="alert-icon">🌎</span>
+          <div class="alert-text">
+            <strong>Reserva cognitiva é uma questão de justiça social</strong>
+            <span>No Amazonas, baixa escolaridade, insegurança alimentar e barreiras de acesso reduzem estruturalmente a reserva cognitiva das populações. A prevenção da demência começa na alfabetização e nos determinantes sociais da saúde — não apenas no consultório de neurologia.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caso Clínico -->
+      <div id="ce3" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Seu José, 70 anos, professor aposentado, vem à UBS preocupado porque "a memória está falhando". Relata que às vezes demora para lembrar o nome de ex-alunos e precisa fazer listas de compras, mas dirige, cuida das finanças, joga dominó no clube e viaja sozinho. Mini-exame do estado mental (MEEM) = 29/30; teste do relógio normal; sem queixa do informante (a esposa). Qual a conduta mais adequada?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answerQuiz('ce',0)"><span class="opt-letter">A</span> Iniciar inibidor de colinesterase (donepezila) precocemente para "proteger" a memória.</div>
+            <div class="quiz-opt" onclick="answerQuiz('ce',1)"><span class="opt-letter">B</span> Tranquilizar quanto ao envelhecimento cognitivo normal, rastrear causas reversíveis (TSH, B12, humor, sono, audição), orientar atividade física/cognitiva/social e reavaliar em 6–12 meses.</div>
+            <div class="quiz-opt" onclick="answerQuiz('ce',2)"><span class="opt-letter">C</span> Solicitar imediatamente PET-amiloide e punção lombar para biomarcadores.</div>
+            <div class="quiz-opt" onclick="answerQuiz('ce',3)"><span class="opt-letter">D</span> Dizer que "é normal da idade" e encerrar a consulta sem investigação.</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 1 · NEUROTRANSMISSÃO                    -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-1" class="topic-panel m1">
+    <div class="panel-header">
+      <div class="panel-icon-big">⚡</div>
+      <div class="panel-header-text">
+        <h2>Neurotransmissão no Idoso</h2>
+        <p>Os sistemas de neurotransmissores declinam de forma seletiva com a idade, o que torna o cérebro idoso vulnerável a fármacos. Entender essa neuroquímica é entender por que a iatrogenia é uma das principais causas de disfunção cognitiva evitável.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'nt0')">Sistemas de neurotransmissores</button>
+        <button class="tab-btn" onclick="showTab(this,'nt1')">Farmacologia geriátrica</button>
+        <button class="tab-btn" onclick="showTab(this,'nt2')">Carga anticolinérgica &amp; Beers</button>
+        <button class="tab-btn" onclick="showTab(this,'nt3')">Caso Clínico</button>
+      </div>
+
+      <!-- Sistemas -->
+      <div id="nt0" class="tab-content visible">
+        <div class="section-title">Declínio seletivo dos sistemas de neurotransmissão</div>
+        <div class="cards-row">
+          <div class="info-card">
+            <div class="ic-label">Colinérgico</div>
+            <div class="ic-value" style="color:var(--accent5);font-size:1.2rem">↓ Acetilcolina</div>
+            <div class="ic-desc">Perda de neurônios do núcleo basal de Meynert. Central na memória — alvo dos inibidores de colinesterase e explicação da sensibilidade a anticolinérgicos.</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Dopaminérgico</div>
+            <div class="ic-value" style="color:var(--accent1);font-size:1.2rem">↓ 5–10%/década</div>
+            <div class="ic-desc">Perda nigroestriatal fisiológica; explica lentificação motora e vulnerabilidade ao parkinsonismo farmacológico.</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Noradrenérgico</div>
+            <div class="ic-value" style="color:var(--accent2);font-size:1.2rem">↓ Locus coeruleus</div>
+            <div class="ic-desc">Impacto em atenção, vigília e regulação do humor; degeneração precoce em Alzheimer.</div>
+          </div>
+          <div class="info-card">
+            <div class="ic-label">Serotoninérgico / GABA</div>
+            <div class="ic-value" style="color:var(--accent4);font-size:1.2rem">↓ Receptores</div>
+            <div class="ic-desc">Redução de densidade de receptores; relevante para depressão tardia e maior sensibilidade a benzodiazepínicos.</div>
+          </div>
+        </div>
+        <div class="alert alert-note">
+          <span class="alert-icon">🧪</span>
+          <div class="alert-text">
+            <strong>A hipótese colinérgica</strong>
+            <span>O déficit colinérgico correlaciona-se com a gravidade da demência de Alzheimer e fundamenta a farmacoterapia (donepezila, rivastigmina, galantamina). O reverso também é verdadeiro: bloquear a acetilcolina com fármacos anticolinérgicos pode precipitar confusão, delirium e declínio cognitivo — especialmente no cérebro já depletado do idoso.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Farmacologia -->
+      <div id="nt1" class="tab-content">
+        <div class="section-title">Por que o cérebro idoso é mais sensível a fármacos</div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent1)">Farmacocinética</h4>
+            <ul>
+              <li>↓ Metabolismo hepático (fase I) e clearance renal</li>
+              <li>↑ Gordura corporal → acúmulo de fármacos lipofílicos (benzodiazepínicos)</li>
+              <li>↓ Água corporal e albumina → maior fração livre</li>
+              <li>Meia-vida prolongada = efeito cumulativo</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent5)">Farmacodinâmica</h4>
+            <ul>
+              <li>Barreira hematoencefálica mais permeável</li>
+              <li>Menor reserva de neurotransmissores (colinérgica, dopaminérgica)</li>
+              <li>Maior sensibilidade a sedativos, opioides e anticolinérgicos</li>
+              <li>Polifarmácia amplifica interações e efeitos no SNC</li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-text">
+            <strong>"Start low, go slow" — mas também "review and stop"</strong>
+            <span>A deprescrição é intervenção neuroprotetora. Antes de tratar qualquer sintoma cognitivo ou comportamental novo, a primeira pergunta é sempre: "que fármaco pode estar causando isto?". A cascata iatrogênica é reversível.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anticolinérgicos -->
+      <div id="nt2" class="tab-content">
+        <div class="section-title">Carga anticolinérgica e critérios de Beers 2023</div>
+        <div class="prose">
+          <p><strong>Carga anticolinérgica cumulativa</strong> (medida por escalas como a ACB — Anticholinergic Cognitive Burden) associa-se de forma dose-dependente a declínio cognitivo, delirium, quedas e maior risco de demência. Muitos desses fármacos são de venda livre ou prescritos por rotina.</p>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Classe / Fármaco</th><th>Uso comum</th><th>Alternativa mais segura</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Anti-histamínicos 1ª geração</strong> (difenidramina, prometazina, hidroxizina)</td><td>Alergia, insônia, "gotas de dormir"</td><td>Anti-histamínicos 2ª geração; medidas de higiene do sono</td></tr>
+            <tr><td><strong>Antidepressivos tricíclicos</strong> (amitriptilina, nortriptilina)</td><td>Depressão, dor, insônia</td><td>ISRS (sertralina); duloxetina para dor neuropática</td></tr>
+            <tr><td><strong>Antimuscarínicos urinários</strong> (oxibutinina)</td><td>Bexiga hiperativa</td><td>Mirabegrona; terapia comportamental</td></tr>
+            <tr><td><strong>Antiespasmódicos</strong> (escopolamina, hioscina)</td><td>Cólicas, "dor de barriga"</td><td>Tratar a causa; medidas dietéticas</td></tr>
+            <tr><td><strong>Benzodiazepínicos</strong> (diazepam, clonazepam)</td><td>Ansiedade, insônia</td><td>Deprescrição gradual; ISRS; higiene do sono</td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-info">
+          <span class="alert-icon">🌎</span>
+          <div class="alert-text">
+            <strong>Realidade da APS amazônica</strong>
+            <span>A automedicação com "gotas para dormir" (prometazina, difenidramina) e o uso crônico de benzodiazepínicos são altamente prevalentes. A revisão de medicações na visita domiciliar e a educação sobre riscos cognitivos são intervenções de baixo custo e alto impacto no território.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caso -->
+      <div id="nt3" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Dona Maria, 78 anos, é trazida pela filha com quadro subagudo (3 semanas) de "confusão, boca seca e visão embaçada". Nas últimas semanas iniciou oxibutinina para bexiga hiperativa, amitriptilina para "dores no corpo e insônia" e vem tomando difenidramina para dormir. Exame: desorientada no tempo, mucosas secas, retenção urinária, sem febre ou déficit focal. MEEM caiu de 27 para 20. Qual a conduta prioritária?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answerQuiz('nt',0)"><span class="opt-letter">A</span> Iniciar donepezila para o declínio cognitivo e manter os demais fármacos.</div>
+            <div class="quiz-opt" onclick="answerQuiz('nt',1)"><span class="opt-letter">B</span> Reconhecer síndrome anticolinérgica/delirium iatrogênico, suspender oxibutinina, amitriptilina e difenidramina, e substituir por alternativas seguras, reavaliando a cognição após a retirada.</div>
+            <div class="quiz-opt" onclick="answerQuiz('nt',2)"><span class="opt-letter">C</span> Prescrever haloperidol para a confusão e um benzodiazepínico para agitação noturna.</div>
+            <div class="quiz-opt" onclick="answerQuiz('nt',3)"><span class="opt-letter">D</span> Diagnosticar doença de Alzheimer de início súbito e encaminhar para instituição de longa permanência.</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 2 · COGNIÇÃO & DEMÊNCIAS                -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-2" class="topic-panel m2">
+    <div class="panel-header">
+      <div class="panel-icon-big">🧩</div>
+      <div class="panel-header-text">
+        <h2>Comprometimento Cognitivo &amp; Demências</h2>
+        <p>Do declínio cognitivo subjetivo à demência estabelecida, o continuum exige raciocínio sindrômico, etiológico e funcional. O objetivo não é apenas nomear a doença, mas cuidar da pessoa e de quem a cuida.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'dem0')">Do CCL às demências</button>
+        <button class="tab-btn" onclick="showTab(this,'dem1')">Abordagem diagnóstica</button>
+        <button class="tab-btn" onclick="showTab(this,'dem2')">Doença de Alzheimer</button>
+        <button class="tab-btn" onclick="showTab(this,'dem3')">Caso Clínico</button>
+      </div>
+
+      <!-- CCL -->
+      <div id="dem0" class="tab-content visible">
+        <div class="section-title">O continuum cognitivo</div>
+        <div class="flowchart">
+          <div class="flow-node" style="background:rgba(110,203,138,0.12);border:1px solid rgba(110,203,138,0.3)">
+            <strong style="color:var(--accent3)">Cognição normal</strong><br><span style="font-size:0.72rem;color:var(--muted)">funcionalidade preservada</span>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node" style="background:rgba(240,201,74,0.12);border:1px solid rgba(240,201,74,0.3)">
+            <strong style="color:var(--accent6)">Declínio cognitivo subjetivo</strong><br><span style="font-size:0.72rem;color:var(--muted)">queixa sem déficit objetivo</span>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node" style="background:rgba(232,160,69,0.12);border:1px solid rgba(232,160,69,0.3)">
+            <strong style="color:var(--accent1)">CCL (comprometimento cognitivo leve)</strong><br><span style="font-size:0.72rem;color:var(--muted)">déficit objetivo, AVDs preservadas</span>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node" style="background:rgba(232,100,74,0.12);border:1px solid rgba(232,100,74,0.3)">
+            <strong style="color:var(--accent5)">Demência</strong><br><span style="font-size:0.72rem;color:var(--muted)">déficit + perda de funcionalidade</span>
+          </div>
+        </div>
+        <div class="section-title" style="margin-top:1.5rem">Principais etiologias de demência</div>
+        <table class="data-table">
+          <thead><tr><th>Tipo</th><th>Marca clínica</th><th>Pista diferencial</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Doença de Alzheimer</strong> (~60–70%)</td><td>Amnésia episódica progressiva insidiosa</td><td>Início pela memória recente; atrofia hipocampal</td></tr>
+            <tr><td><strong>Demência vascular</strong></td><td>Curso em degraus, sinais focais</td><td>Fatores de risco CV; lesões na neuroimagem</td></tr>
+            <tr><td><strong>Demência por corpos de Lewy</strong></td><td>Flutuação, alucinações visuais, parkinsonismo</td><td>Sensibilidade a neurolépticos; RBD; disautonomia</td></tr>
+            <tr><td><strong>Demência frontotemporal</strong></td><td>Alteração de comportamento ou linguagem</td><td>Início mais precoce (&lt; 65a); desinibição/apatia</td></tr>
+            <tr><td><strong>Mista</strong></td><td>Alzheimer + vascular</td><td>Muito comum no idoso — mais regra que exceção</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Diagnóstico -->
+      <div id="dem1" class="tab-content">
+        <div class="section-title">Abordagem diagnóstica racional</div>
+        <div class="prose">
+          <p>O diagnóstico de demência é <strong>clínico e sindrômico</strong>: história com informante, avaliação cognitiva objetiva e comprovação de impacto funcional. Exames complementares servem para excluir causas reversíveis e definir a etiologia.</p>
+        </div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent4)">🧪 Rastreio cognitivo</h4>
+            <ul>
+              <li>MEEM (Mini-Exame do Estado Mental) — ajustar nota de corte por escolaridade</li>
+              <li>MoCA — mais sensível para CCL e disfunção executiva</li>
+              <li>Teste do relógio e fluência verbal</li>
+              <li>Avaliação funcional: Lawton (AVDi) e Katz (AVDb)</li>
+              <li>Questionário do informante (IQCODE)</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent2)">🔬 Investigação de reversíveis</h4>
+            <ul>
+              <li>Hemograma, TSH, B12 e folato</li>
+              <li>Função renal/hepática, cálcio, glicemia</li>
+              <li>Sorologias (sífilis, HIV) conforme contexto</li>
+              <li>Rastreio de depressão (escala de depressão geriátrica)</li>
+              <li>Neuroimagem estrutural (TC ou RM) ao menos uma vez</li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert alert-note">
+          <span class="alert-icon">📋</span>
+          <div class="alert-text">
+            <strong>Framework ATN e biomarcadores</strong>
+            <span>A pesquisa moderna classifica a doença de Alzheimer por biomarcadores: A (amiloide, por PET ou líquor), T (tau) e N (neurodegeneração). Úteis em casos atípicos, precoces ou de pesquisa — mas indisponíveis na maior parte do SUS. O diagnóstico segue clínico e funcional na atenção básica.</span>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-text">
+            <strong>Cuidado com o MEEM em baixa escolaridade</strong>
+            <span>Notas de corte fixas geram falsos-positivos em pessoas com pouca ou nenhuma escolaridade — realidade frequente no interior do Amazonas. Use pontos de corte ajustados e valorize a mudança em relação ao basal e a queixa do informante, não um número absoluto.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alzheimer -->
+      <div id="dem2" class="tab-content">
+        <div class="section-title">Doença de Alzheimer: fisiopatologia e tratamento</div>
+        <div class="prose">
+          <p><strong>Cascata amiloide e taupatia:</strong> acúmulo de placas de β-amiloide e emaranhados neurofibrilares de tau hiperfosforilada, com perda sináptica e neuroinflamação. O déficit colinérgico cortical fundamenta o tratamento sintomático.</p>
+        </div>
+        <div class="drugs-grid">
+          <div class="drug-card">
+            <div class="dc-name">Donepezila</div>
+            <div class="dc-class">Inib. colinesterase</div>
+            <div class="dc-note">Leve a grave. Efeitos GI, bradicardia, sonhos vívidos. Disponível no SUS (Componente Especializado).</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name">Rivastigmina</div>
+            <div class="dc-class">Inib. colinesterase</div>
+            <div class="dc-note">Adesivo transdérmico melhora tolerância GI. Útil também na demência de Parkinson.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name">Galantamina</div>
+            <div class="dc-class">Inib. colinesterase</div>
+            <div class="dc-note">Ação dupla (colinesterase + modulação nicotínica). Leve a moderada.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name">Memantina</div>
+            <div class="dc-class">Antag. NMDA</div>
+            <div class="dc-note">Moderada a grave. Pode associar-se a um inibidor de colinesterase. Boa tolerância.</div>
+          </div>
+        </div>
+        <div class="alert alert-info">
+          <span class="alert-icon">💊</span>
+          <div class="alert-text">
+            <strong>Anticorpos anti-amiloide (lecanemabe, donanemabe)</strong>
+            <span>Aprovados no exterior (2023–2024) para doença de Alzheimer inicial com amiloide comprovado. Reduzem placas e retardam modestamente o declínio, ao custo de infusões, biomarcadores obrigatórios e risco de ARIA (edema/microhemorragias na RM). Ainda não incorporados ao SUS — o pilar do cuidado permanece não farmacológico e de suporte ao cuidador.</span>
+          </div>
+        </div>
+        <div class="alert alert-success">
+          <span class="alert-icon">🤝</span>
+          <div class="alert-text">
+            <strong>O cuidado não farmacológico é a base</strong>
+            <span>Estimulação cognitiva, atividade física, rotina estruturada, manejo ambiental, suporte ao cuidador (sobrecarga é preditor de institucionalização) e planejamento avançado de cuidados. Tratar demência é cuidar da díade paciente-cuidador.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caso -->
+      <div id="dem3" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Sr. Aparecido, 75 anos, 3 anos de escolaridade, morador de Manaus. A filha relata que há 2 anos ele repete as mesmas perguntas, esqueceu de pagar contas e se perdeu voltando da feira. Mantém-se independente para se vestir e comer, mas parou de gerir dinheiro. Exame: MEEM 18/30 (corte ajustado para baixa escolaridade), teste do relógio alterado, humor eutímico, sem déficit focal. TSH, B12 e TC de crânio normais para a idade (atrofia difusa leve). Qual a interpretação e conduta?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answerQuiz('dem',0)"><span class="opt-letter">A</span> Envelhecimento normal; apenas orientar a família e não investigar mais.</div>
+            <div class="quiz-opt" onclick="answerQuiz('dem',1)"><span class="opt-letter">B</span> Síndrome demencial (déficit amnéstico progressivo + perda de AVD instrumental) com padrão sugestivo de doença de Alzheimer; iniciar inibidor de colinesterase, plano não farmacológico e suporte ao cuidador.</div>
+            <div class="quiz-opt" onclick="answerQuiz('dem',2)"><span class="opt-letter">C</span> Depressão maior; iniciar amitriptilina em dose alta.</div>
+            <div class="quiz-opt" onclick="answerQuiz('dem',3)"><span class="opt-letter">D</span> Como não há PET-amiloide, não é possível qualquer conduta; apenas encaminhar e aguardar.</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 3 · PARKINSON                           -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-3" class="topic-panel m3">
+    <div class="panel-header">
+      <div class="panel-icon-big">🎯</div>
+      <div class="panel-header-text">
+        <h2>Parkinson &amp; Distúrbios do Movimento</h2>
+        <p>A doença de Parkinson é a segunda doença neurodegenerativa mais comum. Reconhecê-la — e distingui-la de tremor essencial e parkinsonismo farmacológico — muda radicalmente a conduta e o prognóstico.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'pk0')">Neurodegeneração</button>
+        <button class="tab-btn" onclick="showTab(this,'pk1')">Diagnóstico clínico</button>
+        <button class="tab-btn" onclick="showTab(this,'pk2')">Tratamento</button>
+        <button class="tab-btn" onclick="showTab(this,'pk3')">Caso Clínico</button>
+      </div>
+
+      <!-- Neurodegeneração -->
+      <div id="pk0" class="tab-content visible">
+        <div class="section-title">Fisiopatologia da doença de Parkinson</div>
+        <div class="prose">
+          <p>Degeneração dos neurônios dopaminérgicos da <strong>substância negra pars compacta</strong>, com acúmulo intracelular de α-sinucleína (<strong>corpos de Lewy</strong>). Os sintomas motores surgem quando ~50–60% dos neurônios já foram perdidos — daí a importância dos sinais prodrômicos não motores.</p>
+        </div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent3)">🎯 Sinais motores cardinais (TRAP)</h4>
+            <ul>
+              <li><strong>T</strong>remor de repouso (4–6 Hz, "contar moedas"), assimétrico</li>
+              <li><strong>R</strong>igidez ("roda denteada")</li>
+              <li><strong>A</strong>cinesia/bradicinesia (obrigatória para o diagnóstico)</li>
+              <li><strong>P</strong>ostural instability (instabilidade postural — fase mais tardia)</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent1)">🕰️ Sinais prodrômicos (não motores)</h4>
+            <ul>
+              <li>Transtorno comportamental do sono REM (RBD)</li>
+              <li>Hiposmia (perda do olfato)</li>
+              <li>Constipação crônica</li>
+              <li>Depressão e ansiedade</li>
+              <li>Podem anteceder os sintomas motores em anos a décadas</li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert alert-note">
+          <span class="alert-icon">🧠</span>
+          <div class="alert-text">
+            <strong>Parkinson não é só movimento</strong>
+            <span>Sintomas não motores — disautonomia (hipotensão ortostática, obstipação), distúrbios do sono, dor, apatia, declínio cognitivo e demência tardia — frequentemente impactam mais a qualidade de vida do que os sintomas motores. O manejo é obrigatoriamente multidisciplinar.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagnóstico -->
+      <div id="pk1" class="tab-content">
+        <div class="section-title">Diagnóstico e diferenciais (critérios MDS)</div>
+        <div class="prose">
+          <p>O diagnóstico é <strong>clínico</strong>: bradicinesia + tremor de repouso e/ou rigidez, de início assimétrico, com boa resposta à levodopa. Investigue sempre os grandes imitadores antes de firmar o diagnóstico.</p>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Condição</th><th>Pistas diferenciadoras</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Tremor essencial</strong></td><td>Tremor de ação/postural (não de repouso), simétrico, melhora com álcool, história familiar, sem bradicinesia</td></tr>
+            <tr><td><strong>Parkinsonismo farmacológico</strong></td><td>Simétrico, subagudo, uso de bloqueadores dopaminérgicos (haloperidol, metoclopramida, flunarizina, cinarizina). Reversível!</td></tr>
+            <tr><td><strong>Parkinsonismos atípicos</strong> (PSP, AMS, DCB)</td><td>Quedas precoces, disautonomia grave, paralisia do olhar, má resposta à levodopa, progressão rápida</td></tr>
+            <tr><td><strong>Parkinsonismo vascular</strong></td><td>"Lower body parkinsonism", marcha magnética, fatores de risco CV, lesões na RM</td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-text">
+            <strong>Parkinsonismo farmacológico: o grande evitável</strong>
+            <span>Cinarizina e flunarizina (usadas para "labirintite" e tontura) e a metoclopramida (para náusea) são causas frequentes e subdiagnosticadas de parkinsonismo no idoso — muito prevalentes na prescrição da APS. Sempre revise a lista de medicações antes de rotular como Parkinson idiopático.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tratamento -->
+      <div id="pk2" class="tab-content">
+        <div class="section-title">Tratamento farmacológico</div>
+        <div class="drugs-grid">
+          <div class="drug-card">
+            <div class="dc-name">Levodopa/carbidopa</div>
+            <div class="dc-class">Precursor dopaminérgico</div>
+            <div class="dc-note">Mais eficaz para sintomas motores. Preferida no idoso. Disponível no SUS. Complicações tardias: flutuações e discinesias.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name">Pramipexol / Ropinirol</div>
+            <div class="dc-class">Agonista dopaminérgico</div>
+            <div class="dc-note">Úteis em jovens; cautela no idoso — risco de sonolência, alucinações e transtorno do controle de impulsos.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name">Selegilina / Rasagilina</div>
+            <div class="dc-class">Inibidor MAO-B</div>
+            <div class="dc-note">Benefício sintomático leve; adjuvante em fases iniciais ou para prolongar efeito da levodopa.</div>
+          </div>
+          <div class="drug-card">
+            <div class="dc-name">Entacapona</div>
+            <div class="dc-class">Inibidor COMT</div>
+            <div class="dc-note">Prolonga a ação da levodopa; usada no manejo de flutuações "wearing-off".</div>
+          </div>
+        </div>
+        <div class="alert alert-info">
+          <span class="alert-icon">🏃</span>
+          <div class="alert-text">
+            <strong>Reabilitação é tratamento, não acessório</strong>
+            <span>Fisioterapia, fonoaudiologia (disfagia e disartria) e terapia ocupacional têm evidência robusta. Exercício físico regular tem efeito potencialmente neuroprotetor e melhora marcha e equilíbrio. Prevenir quedas e broncoaspiração salva vidas.</span>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">🚫</span>
+          <div class="alert-text">
+            <strong>Nunca use antipsicóticos típicos ou metoclopramida</strong>
+            <span>Bloqueadores dopaminérgicos pioram dramaticamente o parkinsonismo. Para psicose no Parkinson, prefira quetiapina ou clozapina; para náusea, use domperidona (não atravessa bem a BHE) em vez de metoclopramida.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caso -->
+      <div id="pk3" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Dona Terezinha, 74 anos, é encaminhada por "provável Parkinson". Há 4 meses apresenta tremor e lentidão simétricos, de início relativamente rápido. Faz uso de flunarizina há 8 meses (prescrita para "labirintite") e metoclopramida frequente para náuseas. Ao exame: bradicinesia e rigidez simétricas, tremor postural leve, sem hiposmia, sem RBD, marcha preservada. Qual a conduta mais adequada?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answerQuiz('pk',0)"><span class="opt-letter">A</span> Iniciar levodopa em dose plena imediatamente, assumindo doença de Parkinson idiopática.</div>
+            <div class="quiz-opt" onclick="answerQuiz('pk',1)"><span class="opt-letter">B</span> Suspeitar de parkinsonismo farmacológico (quadro simétrico, subagudo, uso de flunarizina e metoclopramida), suspender os agentes causais, substituir por alternativas seguras e reavaliar em semanas a meses.</div>
+            <div class="quiz-opt" onclick="answerQuiz('pk',2)"><span class="opt-letter">C</span> Prescrever haloperidol para controlar o tremor.</div>
+            <div class="quiz-opt" onclick="answerQuiz('pk',3)"><span class="opt-letter">D</span> Solicitar apenas ressonância e não modificar a medicação em uso.</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 4 · DOENÇA CEREBROVASCULAR              -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-4" class="topic-panel m4">
+    <div class="panel-header">
+      <div class="panel-icon-big">🩸</div>
+      <div class="panel-header-text">
+        <h2>Doença Cerebrovascular</h2>
+        <p>O AVC é uma das principais causas de morte e a maior causa de incapacidade no Brasil. No cérebro que envelhece, a doença de pequenos vasos também é motor silencioso de declínio cognitivo — e amplamente prevenível.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'avc0')">Fisiopatologia</button>
+        <button class="tab-btn" onclick="showTab(this,'avc1')">AVC agudo</button>
+        <button class="tab-btn" onclick="showTab(this,'avc2')">Prevenção</button>
+        <button class="tab-btn" onclick="showTab(this,'avc3')">Caso Clínico</button>
+      </div>
+
+      <!-- Fisiopatologia -->
+      <div id="avc0" class="tab-content visible">
+        <div class="section-title">Epidemiologia e mecanismos</div>
+        <div class="epidemio-strip">
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent5)">~85%</div><div class="epi-label">dos AVCs são isquêmicos</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent1)">~15%</div><div class="epi-label">hemorrágicos (maior letalidade)</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent2)">1ª</div><div class="epi-label">causa de incapacidade em adultos no Brasil</div></div>
+          <div class="epi-item"><div class="epi-val" style="color:var(--accent4)">~90%</div><div class="epi-label">do risco atribuível a fatores modificáveis (INTERSTROKE)</div></div>
+        </div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent5)">Tipos e mecanismos</h4>
+            <ul>
+              <li>Isquêmico: aterotrombótico, cardioembólico (FA), lacunar (pequenos vasos)</li>
+              <li>Hemorrágico: intraparenquimatoso (HAS), subaracnóideo (aneurisma)</li>
+              <li>Angiopatia amiloide: hemorragias lobares no idoso</li>
+              <li>AIT: déficit transitório, alerta para AVC iminente</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent4)">Doença de pequenos vasos &amp; cognição</h4>
+            <ul>
+              <li>Hiperintensidades de substância branca na RM</li>
+              <li>Infartos lacunares e microssangramentos</li>
+              <li>Comprometimento cognitivo vascular (disfunção executiva, lentificação)</li>
+              <li>Frequentemente coexiste com Alzheimer (demência mista)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- AVC agudo -->
+      <div id="avc1" class="tab-content">
+        <div class="section-title">"Tempo é cérebro" — reconhecimento e resposta</div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">🚨</span>
+          <div class="alert-text">
+            <strong>SAMU-192 e reconhecimento: SAMU / "Dê-me um sorriso"</strong>
+            <span>Sinais de alarme (campanha SAMU/AHA): assimetria facial, fraqueza em um braço, alteração da fala, e súbito qualquer déficit neurológico → acionar SAMU imediatamente. Cada minuto de isquemia destrói ~1,9 milhão de neurônios.</span>
+          </div>
+        </div>
+        <div class="flowchart">
+          <div class="flow-node" style="background:rgba(232,100,74,0.15);border:1px solid rgba(232,100,74,0.3)">
+            🚨 Déficit neurológico súbito
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node" style="background:var(--card);border:1px solid var(--border)">
+            <strong style="color:var(--accent5)">SAMU → Unidade de AVC</strong><br><span style="font-size:0.72rem;color:var(--muted)">TC de crânio sem contraste imediata</span>
+          </div>
+          <div class="flow-arrow"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;width:100%;max-width:560px">
+            <div class="flow-node" style="background:rgba(91,155,213,0.12);border:1px solid rgba(91,155,213,0.3);font-size:0.75rem">
+              <strong style="color:var(--accent2)">Isquêmico</strong><br>Trombólise (alteplase/tenecteplase) até 4,5h<br>Trombectomia mecânica até 24h em casos selecionados
+            </div>
+            <div class="flow-node" style="background:rgba(232,100,74,0.12);border:1px solid rgba(232,100,74,0.3);font-size:0.75rem">
+              <strong style="color:var(--accent5)">Hemorrágico</strong><br>Controle pressórico, reversão de anticoagulação<br>Avaliação neurocirúrgica
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-info">
+          <span class="alert-icon">🌎</span>
+          <div class="alert-text">
+            <strong>Linha de Cuidado do AVC no SUS e o desafio amazônico</strong>
+            <span>O SUS possui a Linha de Cuidado do AVC com Unidades de AVC e centros de trombólise. No Amazonas, as distâncias fluviais e a escassez de leitos especializados ampliam a janela pré-hospitalar — reforçando o peso da prevenção primária e da telemedicina/teleAVC como estratégias de equidade.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prevenção -->
+      <div id="avc2" class="tab-content">
+        <div class="section-title">Prevenção do AVC</div>
+        <table class="data-table">
+          <thead><tr><th>Fator</th><th>Intervenção</th><th>Observação no idoso</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Hipertensão</strong></td><td>Controle pressórico (fator #1)</td><td>Individualizar metas; evitar hipotensão e quedas</td></tr>
+            <tr><td><strong>Fibrilação atrial</strong></td><td>Anticoagulação se CHA₂DS₂-VASc elevado</td><td>Preferir DOACs; avaliar risco de sangramento (HAS-BLED) sem contraindicar por idade isolada</td></tr>
+            <tr><td><strong>Dislipidemia</strong></td><td>Estatina conforme risco</td><td>Benefício em prevenção secundária; individualizar em muito idosos frágeis</td></tr>
+            <tr><td><strong>Diabetes</strong></td><td>Controle glicêmico individualizado</td><td>Evitar hipoglicemia</td></tr>
+            <tr><td><strong>Tabagismo / sedentarismo</strong></td><td>Cessação e atividade física</td><td>Benefício em qualquer idade</td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-note">
+          <span class="alert-icon">🫀</span>
+          <div class="alert-text">
+            <strong>Idade não contraindica anticoagulação</strong>
+            <span>Idosos com FA são os que mais se beneficiam da anticoagulação para prevenir AVC cardioembólico. Negar o tratamento apenas pela idade ("é muito velho para anticoagular") é ageísmo e priva o paciente de proteção robusta. Avalie risco-benefício individual e prevenção de quedas, não a data de nascimento.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caso -->
+      <div id="avc3" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Sr. Raimundo, 68 anos, hipertenso, chega ao pronto-atendimento de Manaus com hemiparesia direita e afasia iniciadas há 2 horas, presenciadas pela esposa. PA 178/96, glicemia 130, sem trauma. TC de crânio sem sinais de hemorragia nem de grande área já hipodensa. Não usa anticoagulantes. Qual a conduta prioritária?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answerQuiz('avc',0)"><span class="opt-letter">A</span> Aguardar 24h para repetir a TC antes de qualquer intervenção.</div>
+            <div class="quiz-opt" onclick="answerQuiz('avc',1)"><span class="opt-letter">B</span> AVC isquêmico dentro da janela (&lt; 4,5h) sem contraindicação evidente → avaliar rapidamente critérios e indicar trombólise, em unidade de AVC, com controle pressórico e monitorização.</div>
+            <div class="quiz-opt" onclick="answerQuiz('avc',2)"><span class="opt-letter">C</span> Administrar AAS em dose alta e liberar para casa, pois o déficit é leve.</div>
+            <div class="quiz-opt" onclick="answerQuiz('avc',3)"><span class="opt-letter">D</span> Baixar a PA agressivamente para 120/80 imediatamente antes de qualquer conduta.</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 5 · SONO, DELIRIUM & NEUROPSIQUIATRIA   -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-5" class="topic-panel m5">
+    <div class="panel-header">
+      <div class="panel-icon-big">🌙</div>
+      <div class="panel-header-text">
+        <h2>Sono, Delirium &amp; Neuropsiquiatria</h2>
+        <p>Delirium é uma emergência médica e um marcador de vulnerabilidade cerebral — frequentemente confundido com demência ou depressão. Reconhecê-lo e preveni-lo reduz mortalidade, quedas e declínio cognitivo.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'del0')">Sono no envelhecimento</button>
+        <button class="tab-btn" onclick="showTab(this,'del1')">Delirium</button>
+        <button class="tab-btn" onclick="showTab(this,'del2')">Depressão &amp; neuropsiquiatria</button>
+        <button class="tab-btn" onclick="showTab(this,'del3')">Caso Clínico</button>
+      </div>
+
+      <!-- Sono -->
+      <div id="del0" class="tab-content visible">
+        <div class="section-title">Arquitetura do sono no idoso</div>
+        <div class="prose">
+          <p>Com a idade há <strong>avanço de fase</strong> (dormir e acordar mais cedo), redução do sono profundo (N3) e maior fragmentação. Isso é parcialmente fisiológico, mas insônia crônica e sonolência diurna merecem investigação — não sedação automática.</p>
+        </div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent6)">Distúrbios frequentes</h4>
+            <ul>
+              <li>Insônia (avaliar higiene do sono, dor, noctúria, ansiedade)</li>
+              <li>Apneia obstrutiva do sono — associada a HAS e declínio cognitivo</li>
+              <li>Síndrome das pernas inquietas</li>
+              <li>Transtorno comportamental do sono REM (RBD) — marcador de sinucleinopatia</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent3)">Manejo racional</h4>
+            <ul>
+              <li>Terapia cognitivo-comportamental para insônia (1ª linha)</li>
+              <li>Higiene do sono, exposição à luz, atividade física</li>
+              <li>Evitar benzodiazepínicos e "Z-drugs" — risco de quedas e delirium</li>
+              <li>Tratar causas: apneia (CPAP), dor, depressão, noctúria</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delirium -->
+      <div id="del1" class="tab-content">
+        <div class="section-title">Delirium: emergência subdiagnosticada</div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">🚨</span>
+          <div class="alert-text">
+            <strong>Início AGUDO + curso FLUTUANTE + INATENÇÃO + pensamento desorganizado ou nível de consciência alterado</strong>
+            <span>Esses são os critérios do CAM (Confusion Assessment Method). O delirium é agudo e reversível — diferente da demência (crônica) e da depressão. A forma hipoativa (sonolência, apatia) é a mais comum e a mais perdida no idoso.</span>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Característica</th><th>Delirium</th><th>Demência</th><th>Depressão</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Início</strong></td><td>Agudo (horas/dias)</td><td>Insidioso (meses/anos)</td><td>Subagudo (semanas)</td></tr>
+            <tr><td><strong>Curso</strong></td><td>Flutuante, piora à noite</td><td>Progressivo estável</td><td>Persistente</td></tr>
+            <tr><td><strong>Atenção</strong></td><td>Gravemente prejudicada</td><td>Preservada no início</td><td>Variável</td></tr>
+            <tr><td><strong>Consciência</strong></td><td>Alterada</td><td>Clara (até fase tardia)</td><td>Clara</td></tr>
+            <tr><td><strong>Reversibilidade</strong></td><td>Geralmente reversível</td><td>Irreversível</td><td>Reversível (tratável)</td></tr>
+          </tbody>
+        </table>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent5)">Precipitantes comuns (mnemônico "DELIRIUM")</h4>
+            <ul>
+              <li>Drogas (anticolinérgicos, benzodiazepínicos, opioides)</li>
+              <li>Infecção (ITU, pneumonia)</li>
+              <li>Distúrbios metabólicos e hidroeletrolíticos</li>
+              <li>Retenção urinária/fecal, dor, desidratação</li>
+              <li>Hipóxia, privação de sono, mudança de ambiente</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent3)">Manejo — não farmacológico primeiro</h4>
+            <ul>
+              <li>Identificar e tratar a causa (é um sintoma, não um diagnóstico)</li>
+              <li>Reorientação, presença de familiar, mobilização precoce</li>
+              <li>Restaurar sono, hidratação, óculos e aparelhos auditivos</li>
+              <li>Antipsicótico em dose baixa apenas se agitação com risco; nunca contenção química de rotina</li>
+              <li>Programa HELP reduz incidência de delirium hospitalar</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Depressão -->
+      <div id="del2" class="tab-content">
+        <div class="section-title">Depressão tardia e sintomas neuropsiquiátricos</div>
+        <div class="prose">
+          <p>A depressão no idoso frequentemente se apresenta com <strong>queixas somáticas, apatia e déficit cognitivo</strong> (pseudodemência) em vez de tristeza clássica. É subdiagnosticada e é um fator de risco tanto para demência quanto para suicídio — cuja taxa é elevada em homens idosos.</p>
+        </div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent4)">Pseudodemência depressiva</h4>
+            <ul>
+              <li>Queixa cognitiva desproporcional ao desempenho</li>
+              <li>Respostas "não sei" (vs. confabulação na demência)</li>
+              <li>Início mais definido, humor deprimido</li>
+              <li>Melhora cognitiva com tratamento do humor</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent2)">Tratamento</h4>
+            <ul>
+              <li>ISRS (sertralina, escitalopram) — 1ª linha</li>
+              <li>Evitar tricíclicos (carga anticolinérgica)</li>
+              <li>Psicoterapia e ativação comportamental</li>
+              <li>Rastrear risco de suicídio ativamente</li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-text">
+            <strong>Sintomas neuropsiquiátricos da demência (SNPD/BPSD)</strong>
+            <span>Agitação, psicose e agressividade na demência devem ser manejados primeiro com estratégias não farmacológicas (identificar gatilhos, dor, ambiente). Antipsicóticos têm eficácia modesta e aumentam risco de AVC e mortalidade — uso restrito, na menor dose e menor tempo possível, com reavaliação frequente.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caso -->
+      <div id="del3" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Dona Francisca, 82 anos, com demência leve conhecida, é internada por fratura de fêmur. No 2º dia pós-operatório, a equipe nota que ela está "pior da cabeça": sonolenta pela manhã, agitada e desorientada à noite, com atenção muito flutuante e discurso desorganizado. Está com sonda vesical, em uso de morfina e recebeu difenidramina para dormir. Qual a interpretação e a conduta inicial?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answerQuiz('del',0)"><span class="opt-letter">A</span> É apenas progressão natural da demência; ajustar expectativas da família.</div>
+            <div class="quiz-opt" onclick="answerQuiz('del',1)"><span class="opt-letter">B</span> Delirium hiperativo-hipoativo sobreposto à demência; buscar e tratar precipitantes (dor, opioide, difenidramina, sonda/ITU), suspender fármacos deletérios e aplicar medidas não farmacológicas de reorientação e mobilização.</div>
+            <div class="quiz-opt" onclick="answerQuiz('del',2)"><span class="opt-letter">C</span> Iniciar haloperidol em dose alta fixa e contenção física para a agitação noturna.</div>
+            <div class="quiz-opt" onclick="answerQuiz('del',3)"><span class="opt-letter">D</span> Aumentar a difenidramina para garantir que ela durma à noite.</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- MÓDULO 6 · RESERVA COGNITIVA & PREVENÇÃO       -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="module-6" class="topic-panel m6">
+    <div class="panel-header">
+      <div class="panel-icon-big">🛡️</div>
+      <div class="panel-header-text">
+        <h2>Reserva Cognitiva &amp; Prevenção</h2>
+        <p>Até ~45% dos casos de demência são potencialmente preveníveis atuando sobre fatores de risco modificáveis ao longo da vida (Lancet Commission 2024). A prevenção é o mais poderoso — e mais negligenciado — dos tratamentos.</p>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="tabs-bar">
+        <button class="tab-btn active" onclick="showTab(this,'prev0')">Fatores modificáveis</button>
+        <button class="tab-btn" onclick="showTab(this,'prev1')">Intervenções</button>
+        <button class="tab-btn" onclick="showTab(this,'prev2')">Cérebro na Amazônia</button>
+        <button class="tab-btn" onclick="showTab(this,'prev3')">Caso Clínico</button>
+      </div>
+
+      <!-- Fatores -->
+      <div id="prev0" class="tab-content visible">
+        <div class="section-title">Os 14 fatores da Lancet Commission (2024)</div>
+        <div class="prose">
+          <p>A comissão da <strong>Lancet 2024</strong> ampliou para 14 os fatores de risco modificáveis, distribuídos por três fases da vida. Atuar sobre eles poderia prevenir ou retardar até 45% dos casos de demência.</p>
+        </div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent7)">Início da vida &amp; meia-idade</h4>
+            <ul>
+              <li>Baixa escolaridade (início da vida)</li>
+              <li>Perda auditiva</li>
+              <li>Hipertensão</li>
+              <li>Obesidade</li>
+              <li>Trauma cranioencefálico</li>
+              <li>Consumo excessivo de álcool</li>
+              <li>Colesterol LDL elevado (novo em 2024)</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent2)">Vida tardia</h4>
+            <ul>
+              <li>Tabagismo</li>
+              <li>Depressão</li>
+              <li>Isolamento social</li>
+              <li>Inatividade física</li>
+              <li>Diabetes</li>
+              <li>Poluição do ar</li>
+              <li>Perda visual não tratada (novo em 2024)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert alert-success">
+          <span class="alert-icon">👂</span>
+          <div class="alert-text">
+            <strong>Perda auditiva: o maior fator isolado da meia-idade</strong>
+            <span>Tratar a perda auditiva (aparelhos auditivos) é uma das intervenções de maior impacto potencial e frequentemente ignorada. Rastrear e corrigir déficits sensoriais — audição e visão — é prevenção de demência custo-efetiva.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Intervenções -->
+      <div id="prev1" class="tab-content">
+        <div class="section-title">Intervenções com evidência</div>
+        <table class="data-table">
+          <thead><tr><th>Intervenção</th><th>Mecanismo / evidência</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Atividade física aeróbica e de resistência</strong></td><td>↑ BDNF, neurogênese, angiogênese; melhora cognição e humor; evidência mais consistente</td></tr>
+            <tr><td><strong>Controle vascular</strong> (PA, glicemia, lipídios)</td><td>Reduz doença de pequenos vasos e AVC; protege cognição</td></tr>
+            <tr><td><strong>Estimulação cognitiva e educação contínua</strong></td><td>Constrói reserva cognitiva; engajamento intelectual ao longo da vida</td></tr>
+            <tr><td><strong>Engajamento social</strong></td><td>Combate isolamento; associado a menor risco de declínio</td></tr>
+            <tr><td><strong>Dieta (padrão MIND/mediterrâneo)</strong></td><td>Anti-inflamatória; associada a menor declínio cognitivo</td></tr>
+            <tr><td><strong>Correção sensorial (audição/visão)</strong></td><td>Reduz carga cognitiva e isolamento</td></tr>
+            <tr><td><strong>Sono de qualidade</strong></td><td>Facilita clearance de amiloide (sistema glinfático)</td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-info">
+          <span class="alert-icon">🏃‍♀️</span>
+          <div class="alert-text">
+            <strong>Intervenção multidomínio (modelo FINGER)</strong>
+            <span>O estudo FINGER mostrou que uma intervenção combinada — dieta, exercício, treino cognitivo e controle de risco vascular — melhora ou mantém a cognição em idosos de risco. Prevenção eficaz é multifatorial e comunitária, não uma pílula.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Amazônia -->
+      <div id="prev2" class="tab-content">
+        <div class="section-title">O cérebro que envelhece na Amazônia</div>
+        <div class="prose">
+          <p>Pensar neurociências do envelhecimento no Amazonas exige olhar para os <strong>determinantes sociais</strong> e as barreiras concretas de acesso — o cérebro não envelhece no vácuo, mas no território.</p>
+        </div>
+        <div class="two-col">
+          <div class="highlight-box">
+            <h4 style="color:var(--accent5)">Desafios do território</h4>
+            <ul>
+              <li>Baixa escolaridade e analfabetismo em coortes idosas</li>
+              <li>Distâncias fluviais e acesso limitado a especialistas e neuroimagem</li>
+              <li>Escassez de reabilitação (fisio, fono, TO) no interior</li>
+              <li>Alta prevalência de HAS, DM e tabagismo mal controlados</li>
+              <li>Automedicação e uso crônico de benzodiazepínicos/anticolinérgicos</li>
+            </ul>
+          </div>
+          <div class="highlight-box">
+            <h4 style="color:var(--accent3)">Estratégias de equidade (SUS)</h4>
+            <ul>
+              <li>APS e ESF como porta de entrada: rastreio cognitivo e de risco vascular</li>
+              <li>Educação em saúde e revisão de medicações na visita domiciliar</li>
+              <li>TeleAVC e telemedicina para reduzir distâncias</li>
+              <li>Caderneta de Saúde da Pessoa Idosa e avaliação multidimensional</li>
+              <li>Apoio ao cuidador familiar e à rede comunitária</li>
+            </ul>
+          </div>
+        </div>
+        <div class="alert alert-note">
+          <span class="alert-icon">⚖️</span>
+          <div class="alert-text">
+            <strong>Perspectiva crítica e anti-ageísta</strong>
+            <span>Prevenir demência é, antes de tudo, uma agenda de justiça social: educação, controle da hipertensão, acesso a aparelhos auditivos e combate à pobreza fazem mais pela saúde cerebral da população amazônica do que qualquer fármaco de alto custo. Envelhecer não é adoecer.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caso -->
+      <div id="prev3" class="tab-content">
+        <div class="section-title">Caso clínico interativo</div>
+        <div class="quiz-container">
+          <div class="quiz-q">
+            <span class="q-num">CASO CLÍNICO</span>
+            Sr. Manoel, 63 anos, ribeirinho, comparece à UBS para consulta de rotina. É hipertenso mal controlado (PA 168/98), tabagista, sedentário, refere que "não escuta bem" há anos e vive isolado desde que enviuvou. Sem queixa cognitiva no momento. Preocupado com a mãe que teve demência, pergunta o que pode fazer para "não ficar esquecido". Qual a abordagem preventiva mais adequada?
+          </div>
+          <div class="quiz-options">
+            <div class="quiz-opt" onclick="answerQuiz('prev',0)"><span class="opt-letter">A</span> Nada a fazer sem sintomas cognitivos; orientar retorno apenas se aparecerem esquecimentos.</div>
+            <div class="quiz-opt" onclick="answerQuiz('prev',1)"><span class="opt-letter">B</span> Solicitar PET-amiloide e iniciar donepezila profilática.</div>
+            <div class="quiz-opt" onclick="answerQuiz('prev',2)"><span class="opt-letter">C</span> Intervenção multidomínio sobre os fatores modificáveis: controlar a PA, cessar o tabagismo, avaliar e corrigir a perda auditiva, estimular atividade física e engajamento social, e reforçar vínculo comunitário — atuando sobre vários fatores da Lancet 2024.</div>
+            <div class="quiz-opt" onclick="answerQuiz('prev',3)"><span class="opt-letter">D</span> Prescrever um suplemento "para a memória" e encerrar a consulta.</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .content-area -->
+</div><!-- #app -->
+
+<script>
+// ── Module navigation ──
+function showModule(idx) {
+  document.querySelectorAll('.topic-panel').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.module-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('module-' + idx).classList.add('visible');
+  document.querySelectorAll('.module-btn')[idx].classList.add('active');
+  // Reset to first tab
+  const panel = document.getElementById('module-' + idx);
+  const tabs = panel.querySelectorAll('.tab-btn');
+  const contents = panel.querySelectorAll('.tab-content');
+  tabs.forEach(t => t.classList.remove('active'));
+  contents.forEach(c => c.classList.remove('visible'));
+  if (tabs[0]) tabs[0].classList.add('active');
+  if (contents[0]) contents[0].classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateProgress(idx);
+}
+
+// ── Tab navigation ──
+function showTab(btn, contentId) {
+  const panel = btn.closest('.panel-body');
+  panel.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  panel.querySelectorAll('.tab-content').forEach(c => c.classList.remove('visible'));
+  btn.classList.add('active');
+  document.getElementById(contentId).classList.add('visible');
+}
+
+// ── Progress bar ──
+const TOTAL_MODULES = 7;
+function updateProgress(idx) {
+  document.getElementById('progressFill').style.width = ((idx + 1) / TOTAL_MODULES * 100) + '%';
+}
+
+// ── Quiz answers ──
+const quizData = {
+  ce: {
+    correct: 1,
+    feedback: '✅ <strong>Correto — Alternativa B</strong><br><br>Seu José apresenta queixa cognitiva subjetiva com <strong>funcionalidade totalmente preservada</strong> (dirige, gerencia finanças, viaja sozinho), desempenho normal nos testes (MEEM 29/30) e sem confirmação do informante. Isso caracteriza o envelhecimento cognitivo normal — a dificuldade ocasional para evocar nomes é fisiológica. A conduta correta é tranquilizar, rastrear causas potencialmente contribuintes (tireoide, B12, humor, sono, audição), promover fatores protetores (atividade física, cognitiva e social) e reavaliar. A alternativa D representa ageísmo (encerrar sem investigar); A e C são sobremedicalização e sobrediagnóstico — inibidores de colinesterase não previnem demência em pessoas assintomáticas e biomarcadores não estão indicados aqui.',
+    wrong: '❌ <strong>Incorreto.</strong> Reveja: funcionalidade preservada + testes normais + sem confirmação do informante = envelhecimento normal, não doença. A conduta é tranquilizar e rastrear contribuintes reversíveis, sem medicalizar nem submeter a biomarcadores caros. Cuidado tanto com o ageísmo (D) quanto com a sobremedicalização (A e C).'
+  },
+  nt: {
+    correct: 1,
+    feedback: '✅ <strong>Correto — Alternativa B</strong><br><br>Dona Maria tem uma <strong>síndrome anticolinérgica com delirium iatrogênico</strong>: quadro subagudo de confusão, boca seca, visão embaçada e retenção urinária, temporalmente ligado ao início de três fármacos de alta carga anticolinérgica (oxibutinina, amitriptilina e difenidramina). A conduta é suspender os agentes causais e substituí-los por alternativas seguras (ex.: mirabegrona para bexiga, medidas não farmacológicas para sono/dor), reavaliando a cognição após a retirada — habitualmente reversível. A alternativa A ignora a causa e adiciona fármaco; C acrescenta neuroléptico e benzodiazepínico (piora o delirium e o risco de quedas); D é um erro diagnóstico grave — Alzheimer não tem início súbito.',
+    wrong: '❌ <strong>Incorreto.</strong> Reveja: início subagudo + boca seca + visão embaçada + retenção urinária + três anticolinérgicos recém-iniciados = delirium iatrogênico. A primeira medida é retirar os fármacos causais, não adicionar novos (donepezila, haloperidol, benzodiazepínico). A cognição costuma se recuperar após a deprescrição.'
+  },
+  dem: {
+    correct: 1,
+    feedback: '✅ <strong>Correto — Alternativa B</strong><br><br>Sr. Aparecido preenche critérios de <strong>síndrome demencial</strong>: declínio cognitivo progressivo (memória, repetir perguntas, perder-se) com <strong>perda de AVD instrumental</strong> (parou de gerir dinheiro). O padrão amnéstico insidioso, com reversíveis excluídos (TSH e B12 normais) e atrofia difusa, sugere doença de Alzheimer (possivelmente mista). A conduta é iniciar inibidor de colinesterase, estruturar plano não farmacológico (estimulação, rotina, segurança) e apoiar o cuidador. O MEEM 18/30 foi interpretado com corte ajustado à baixa escolaridade — evitando o erro de subvalorizar. A alternativa A é ageísmo; C usa um tricíclico anticolinérgico (perigoso); D condiciona erroneamente qualquer cuidado à disponibilidade de PET.',
+    wrong: '❌ <strong>Incorreto.</strong> Reveja: déficit cognitivo progressivo + perda de AVD instrumental = demência (não envelhecimento normal). O diagnóstico é clínico-funcional e não exige PET. A conduta inclui inibidor de colinesterase, plano não farmacológico e suporte ao cuidador — e nunca amitriptilina (anticolinérgico) no idoso com demência.'
+  },
+  pk: {
+    correct: 1,
+    feedback: '✅ <strong>Correto — Alternativa B</strong><br><br>O quadro de Dona Terezinha é típico de <strong>parkinsonismo farmacológico</strong>: instalação relativamente rápida, sintomas <strong>simétricos</strong>, ausência de sinais prodrômicos (sem hiposmia, sem RBD) e uso de dois bloqueadores dopaminérgicos clássicos — flunarizina (para "labirintite") e metoclopramida (para náusea). A conduta é suspender os agentes causais e substituí-los (ex.: domperidona para náusea, tratar a causa da tontura), com reavaliação em semanas a meses, pois costuma ser reversível. Iniciar levodopa (A) ou solicitar apenas RM sem retirar o fármaco (D) mantém a causa; haloperidol (C) é um bloqueador dopaminérgico e agravaria o parkinsonismo.',
+    wrong: '❌ <strong>Incorreto.</strong> Reveja: parkinsonismo simétrico, subagudo, com uso de flunarizina e metoclopramida = parkinsonismo farmacológico (reversível). A conduta é suspender os agentes causais antes de assumir Parkinson idiopático — e jamais introduzir haloperidol, que é outro bloqueador dopaminérgico.'
+  },
+  avc: {
+    correct: 1,
+    feedback: '✅ <strong>Correto — Alternativa B</strong><br><br>Sr. Raimundo tem um <strong>AVC isquêmico agudo</strong> (déficit focal súbito, TC sem hemorragia) com tempo de início bem definido de 2 horas — <strong>dentro da janela de trombólise</strong> (&lt; 4,5h). A conduta é avaliar rapidamente critérios de inclusão/exclusão e indicar trombólise, em unidade de AVC, com controle pressórico adequado (permissivo até os limiares recomendados antes de trombolisar) e monitorização; considerar trombectomia se oclusão de grande vaso. "Tempo é cérebro". A alternativa A desperdiça a janela; C subtrata um evento agudo; D descreve redução pressórica excessiva e precoce, que pode agravar a isquemia.',
+    wrong: '❌ <strong>Incorreto.</strong> Reveja: déficit focal súbito + TC sem hemorragia + início &lt; 4,5h = candidato à trombólise em unidade de AVC. Não se deve aguardar (A), apenas dar AAS e liberar (C) nem baixar a PA agressivamente antes de tratar (D). Tempo é cérebro.'
+  },
+  del: {
+    correct: 1,
+    feedback: '✅ <strong>Correto — Alternativa B</strong><br><br>Dona Francisca desenvolveu <strong>delirium sobreposto à demência</strong> — início agudo no pós-operatório, curso flutuante (sonolenta de manhã, agitada à noite), inatenção marcante e pensamento desorganizado (CAM positivo). Há múltiplos precipitantes: dor, opioide, difenidramina (anticolinérgico), sonda vesical (risco de ITU/retenção) e ambiente hospitalar. A conduta é buscar e tratar as causas, suspender os fármacos deletérios e aplicar medidas não farmacológicas (reorientação, presença de familiar, mobilização, sono, correção sensorial). A alternativa A perde uma emergência reversível; C e D pioram o quadro (haloperidol em dose alta + contenção; mais difenidramina anticolinérgica).',
+    wrong: '❌ <strong>Incorreto.</strong> Reveja: início agudo + flutuação + inatenção no pós-operatório = delirium sobreposto à demência, não simples progressão. O manejo é identificar/tratar precipitantes (dor, opioide, difenidramina, sonda/ITU) e usar medidas não farmacológicas — nunca aumentar a difenidramina nem partir para contenção química de rotina.'
+  },
+  prev: {
+    correct: 2,
+    feedback: '✅ <strong>Correto — Alternativa C</strong><br><br>Sr. Manoel concentra vários fatores de risco modificáveis da <strong>Lancet Commission 2024</strong>: hipertensão mal controlada, tabagismo, inatividade física, perda auditiva não tratada e isolamento social. A melhor prevenção de demência é uma <strong>intervenção multidomínio</strong> (modelo FINGER): controlar a PA, cessar o tabagismo, avaliar e corrigir a audição, estimular atividade física e reconstruir o engajamento social/comunitário. Isso atua sobre múltiplos fatores simultaneamente e é custo-efetivo no SUS. A alternativa A é omissa e perde a janela preventiva; B é sobrediagnóstico/sobretratamento sem indicação; D oferece um "suplemento para memória" sem evidência.',
+    wrong: '❌ <strong>Incorreto.</strong> Reveja: a prevenção da demência atua sobre fatores modificáveis (Lancet 2024) — controle da PA, cessação do tabagismo, correção da perda auditiva, atividade física e combate ao isolamento — de forma multidomínio. Não se justifica esperar sintomas (A), pedir PET/donepezila profilática (B) nem prescrever suplemento sem evidência (D).'
+  }
+};
+
+function answerQuiz(module, optIdx) {
+  const data = quizData[module];
+  const activePanel = document.querySelector('.topic-panel.visible');
+  if (!activePanel) return;
+  const activeTab = activePanel.querySelector('.tab-content.visible');
+  if (!activeTab) return;
+  const optsEl = activeTab.querySelector('.quiz-options');
+  const fbEl = activeTab.querySelector('.quiz-feedback');
+  if (!optsEl || !fbEl) return;
+
+  if (optsEl.dataset.answered) return;
+  optsEl.dataset.answered = true;
+
+  const opts = optsEl.querySelectorAll('.quiz-opt');
+  opts.forEach((o, i) => {
+    if (i === data.correct) o.classList.add('correct');
+    else if (i === optIdx && optIdx !== data.correct) o.classList.add('wrong');
+    o.style.pointerEvents = 'none';
+  });
+
+  const isCorrect = optIdx === data.correct;
+  fbEl.innerHTML = isCorrect ? data.feedback : data.wrong;
+  fbEl.style.background = isCorrect ? 'rgba(110,203,138,0.1)' : 'rgba(232,100,74,0.1)';
+  fbEl.style.border = isCorrect ? '1px solid rgba(110,203,138,0.3)' : '1px solid rgba(232,100,74,0.3)';
+  fbEl.style.padding = '1rem';
+  fbEl.style.borderRadius = '8px';
+  fbEl.style.fontSize = '0.82rem';
+  fbEl.style.lineHeight = '1.65';
+  fbEl.style.color = 'var(--muted)';
+  fbEl.classList.add('show');
+}
+
+// ── Scroll progress ──
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  const progress = (window.scrollY / total) * 100;
+  const activeIdx = [...document.querySelectorAll('.module-btn')].findIndex(b => b.classList.contains('active'));
+  const base = (activeIdx / TOTAL_MODULES) * 100;
+  document.getElementById('progressFill').style.width = Math.max(base, Math.min(100, progress)) + '%';
+});
+
+// Init
+updateProgress(0);
+</script>
+</body>
+</html>
